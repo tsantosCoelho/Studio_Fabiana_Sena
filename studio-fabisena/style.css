@@ -136,7 +136,7 @@ body{
 .lashes-bg{
   background-image:url('/assets/tufos03.png');
   background-size: 70%;
-  background-repeat: no-repeat;
+  
  
  
 }
@@ -145,6 +145,7 @@ body{
   position:absolute;
   inset:0;
   background:rgba(0, 0, 0, 0.123);
+  background-repeat: no-repeat;
 }
 
 .content{
