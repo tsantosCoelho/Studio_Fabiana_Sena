@@ -20,22 +20,18 @@ body{
     2px 2px 5px rgba(0,0,0,.95);
 }
 
-/* NAVBAR */
+/* ================= NAVBAR ================= */
 
 .navbar{
   position:fixed;
   width:100%;
   top:0;
   left:0;
-
   padding:20px 8%;
-
   display:flex;
   justify-content:space-between;
   align-items:center;
-
   z-index:1000;
-
   backdrop-filter:blur(10px);
   background:rgba(0,0,0,.3);
 }
@@ -60,26 +56,21 @@ body{
   color:#ff77aa;
 }
 
-/* HERO */
+/* ================= HERO ================= */
 
 .hero{
-  position:relative;
-
   min-height:100vh;
-
-  background:
-  url('/assets/img1.png')
-  center center/cover no-repeat;
-
-  background-attachment:fixed;
-
   display:flex;
   align-items:center;
   justify-content:center;
-
   text-align:center;
-
   padding:20px;
+
+  background:
+    url('/assets/img1.png')
+    center/cover no-repeat;
+
+  background-attachment:fixed;
 }
 
 .overlay{
@@ -113,79 +104,55 @@ body{
 
 .btn{
   padding:15px 35px;
-
   border-radius:50px;
-
   text-decoration:none;
   color:#fff;
-
   font-weight:600;
-
   transition:.3s;
 }
 
-.whatsapp{
-  background:#25d366;
-}
-
-.instagram{
-  background:linear-gradient(
-    45deg,
-    #833ab4,
-    #fd1d1d,
-    #fcb045
-  );
-}
+.whatsapp{ background:#25d366; }
+.instagram{ background:linear-gradient(45deg,#833ab4,#fd1d1d,#fcb045); }
 
 .btn:hover{
   transform:translateY(-5px);
 }
 
-/* SERVICES */
+/* ================= SERVICES ================= */
 
 .services{
   position:relative;
-
   padding:90px 8%;
+}
 
+/* FUNDO NAILS */
+
+.nails-bg{
+  background-image:url('https://images.unsplash.com/photo-1610992015732-2449b76344bc?q=80&w=1974&auto=format&fit=crop');
   background-size:cover;
   background-position:center;
-  background-repeat:no-repeat;
-
   background-attachment:fixed;
 }
 
-.nails-bg{
-  background-image:
-  url('https://images.unsplash.com/photo-1610992015732-2449b76344bc?q=80&w=1974&auto=format&fit=crop');
+/* FUNDO CÍLIOS (CORRIGIDO) */
+
+.lashes-bg{
+  background-image:url('/assets/tufos03.png');
+
+  background-repeat:no-repeat;
+  background-position:center;
+  background-size:contain;
+
+  background-attachment:scroll;
+
+  min-height:60vh;
 }
 
-/* FUNDO CÍLIOS */
-
-@media(max-width:700px){
-
-  .lashes-bg{
-    background-image:url('/assets/tufos03.png');
-
-    background-repeat:no-repeat;
-
-    background-position:center center;
-
-    background-size:90% auto;
-
-    background-attachment:scroll;
-
-    min-height:60vh;
-  }
-
-}
-
-/* OVERLAY */
+/* ================= CONTENT ================= */
 
 .overlay-section{
   position:absolute;
   inset:0;
-
   background:rgba(0,0,0,.18);
 }
 
@@ -196,62 +163,34 @@ body{
 
 .services h2{
   text-align:center;
-
   font-size:3rem;
-
   margin-bottom:50px;
 }
 
+/* ================= CARDS ================= */
+
 .cards{
   display:grid;
-
-  grid-template-columns:
-  repeat(auto-fit,minmax(250px,1fr));
-
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
   gap:25px;
 }
 
-/* CARDS */
-
 .card{
   position:relative;
-
   overflow:hidden;
 
   min-height:320px;
-
   padding:35px 25px;
 
   border-radius:25px;
-
-  text-align:center;
-
-  transition:.3s;
 
   display:flex;
   flex-direction:column;
   justify-content:center;
   align-items:center;
 
-  background-size:cover;
-  background-position:center;
-  background-repeat:no-repeat;
-}
-
-.card::before{
-  content:"";
-
-  position:absolute;
-  inset:0;
-
-  z-index:1;
-}
-
-.card i,
-.card h3,
-.card p{
-  position:relative;
-  z-index:2;
+  text-align:center;
+  transition:.3s;
 }
 
 .card:hover{
@@ -260,53 +199,52 @@ body{
 
 .card i{
   font-size:3rem;
-
-  margin-bottom:20px;
-
+  margin-bottom:15px;
   color:#ff77aa;
 }
 
 .card h3{
-  margin-bottom:15px;
+  margin-bottom:10px;
 }
 
 .card p{
-  line-height:1.6;
+  line-height:1.5;
 }
 
-/* IMAGENS DOS CARDS */
+/* CARDS BACKGROUNDS */
 
 .nails-bg .card:nth-child(1){
-  background-image:
-  linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.35)),
+  background:
+  linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,.35)),
   url('/assets/f1.png');
-
+  background-size:cover;
+  background-position:center;
   border:1px solid #fff;
 }
 
 .nails-bg .card:nth-child(2){
-  background-image:
-  linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.35)),
+  background:
+  linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,.35)),
   url('/assets/gel.png');
-
+  background-size:cover;
+  background-position:center;
   border:1px solid #fff;
 }
 
 .nails-bg .card:nth-child(3){
-  background-image:
-  linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.35)),
+  background:
+  linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,.35)),
   url('/assets/blind.png');
-
+  background-size:cover;
+  background-position:center;
   border:1px solid #fff;
 }
 
-/* CONTACT */
+/* ================= CONTACT ================= */
 
 .contact{
   padding:90px 8% 140px;
-
   background:#111;
-
   text-align:center;
 }
 
@@ -318,43 +256,31 @@ body{
 .contact-info{
   display:flex;
   flex-direction:column;
-
   gap:20px;
-
-  font-size:1.1rem;
-
   margin-bottom:50px;
 }
 
-.contact-info i{
-  color:#ff77aa;
-  margin-right:10px;
-}
+/* MAP */
 
 .map iframe{
   width:100%;
   height:450px;
-
   border:none;
-
   border-radius:25px;
 }
 
-/* FOOTER */
+/* ================= FOOTER ================= */
 
 footer{
   background:#000;
-
   padding:30px 20px 100px;
-
   text-align:center;
 }
 
-/* WHATSAPP */
+/* ================= WHATSAPP ================= */
 
 .floating-whatsapp{
   position:fixed;
-
   right:18px;
   bottom:18px;
 
@@ -372,222 +298,74 @@ footer{
 
   font-size:1.7rem;
 
-  text-decoration:none;
-
   z-index:9999;
 
   animation:pulse 2s infinite;
 }
 
 @keyframes pulse{
-
-  0%{
-    transform:scale(1);
-  }
-
-  50%{
-    transform:scale(1.1);
-  }
-
-  100%{
-    transform:scale(1);
-  }
-
+  0%{transform:scale(1);}
+  50%{transform:scale(1.1);}
+  100%{transform:scale(1);}
 }
 
-/* RESPONSIVO TABLET */
-
-@media(max-width:900px){
-
-  .hero-content h1{
-    font-size:3rem;
-  }
-
-}
-
-/* RESPONSIVO CELULAR */
+/* ================= RESPONSIVO ================= */
 
 @media(max-width:700px){
 
-  body{
-    overflow-x:hidden;
-  }
-
-  /* NAVBAR */
-
   .navbar{
     flex-direction:column;
-
     gap:15px;
-
-    padding:15px 5%;
   }
-
-  .logo{
-    font-size:1.2rem;
-  }
-
-  .menu{
-    gap:12px;
-
-    flex-wrap:wrap;
-
-    justify-content:center;
-  }
-
-  .menu a{
-    font-size:.9rem;
-  }
-
-  /* HERO */
 
   .hero{
-    min-height:90vh;
-
     background-attachment:scroll;
-
-    background-position:center;
-    background-size:cover;
   }
 
   .hero-content h1{
     font-size:2.1rem;
-    line-height:1.2;
   }
 
   .hero-content p{
     font-size:.95rem;
-
-    line-height:1.5;
   }
-
-  .buttons{
-    gap:12px;
-
-    margin-top:25px;
-  }
-
-  .btn{
-    width:100%;
-    max-width:280px;
-
-    padding:14px 20px;
-
-    font-size:.95rem;
-  }
-
-  /* SERVICES */
 
   .services{
     padding:50px 5%;
-
-    background-attachment:scroll;
   }
 
-  .services h2{
-    font-size:2rem;
-
-    margin-bottom:25px;
-  }
-
-  /* CORREÇÃO TOTAL DA IMAGEM TUFOS03 */
+  /* CÍLIOS MOBILE CORRIGIDO */
 
   .lashes-bg{
-
     background-image:url('/assets/tufos03.png');
-
-    background-size:cover;
-
-    background-position:center center;
-
+    background-size:contain;
+    background-position:center;
     background-repeat:no-repeat;
-
     background-attachment:scroll;
 
-    min-height:auto;
+    min-height:50vh;
   }
-
-  /* CARDS */
 
   .cards{
     grid-template-columns:1fr;
-
-    gap:18px;
   }
 
   .card{
     min-height:190px;
-
-    padding:20px 15px;
-
-    border-radius:18px;
-  }
-
-  .card i{
-    font-size:2rem;
-
-    margin-bottom:10px;
-  }
-
-  .card h3{
-    font-size:1rem;
-
-    margin-bottom:10px;
-  }
-
-  .card p{
-    font-size:.9rem;
-
-    line-height:1.4;
-  }
-
-  /* CONTACT */
-
-  .contact{
-    padding:70px 5% 140px;
-  }
-
-  .contact h2{
-    font-size:2rem;
-
-    margin-bottom:25px;
-  }
-
-  .contact-info{
-    gap:15px;
-
-    font-size:.95rem;
+    padding:20px;
   }
 
   .map iframe{
     height:300px;
-
-    border-radius:18px;
   }
-
-  /* FOOTER */
-
-  footer{
-    padding:20px 15px 100px;
-
-    font-size:.85rem;
-  }
-
-  /* WHATSAPP */
 
   .floating-whatsapp{
     width:52px;
     height:52px;
-
-    font-size:1.4rem;
-
     right:12px;
     bottom:18px;
   }
-
 }
-
-/* CELULARES MUITO PEQUENOS */
 
 @media(max-width:380px){
 
@@ -595,32 +373,8 @@ footer{
     font-size:1.7rem;
   }
 
-  .hero-content p{
-    font-size:.85rem;
-  }
-
   .services h2,
   .contact h2{
     font-size:1.6rem;
   }
-
-  .card{
-    min-height:170px;
-
-    padding:16px 12px;
-  }
-
-  .btn{
-    font-size:.85rem;
-
-    padding:12px 16px;
-  }
-
-  .floating-whatsapp{
-    width:48px;
-    height:48px;
-
-    font-size:1.2rem;
-  }
-
 }
