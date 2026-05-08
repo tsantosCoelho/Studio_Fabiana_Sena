@@ -356,6 +356,7 @@ footer{
   .navbar{
     flex-direction:column;
     gap:20px;
+    padding:15px 5%;
   }
 
   .menu{
@@ -368,31 +369,79 @@ footer{
     font-size:2.3rem;
   }
 
+  .hero-content p{
+    font-size:1rem;
+  }
+
   .services h2,
   .contact h2{
     font-size:2rem;
+    margin-bottom:30px;
   }
 
-    /* AJUSTE DA SEÇÃO DE CÍLIOS */
+  /* REDUZ MUITO A ALTURA DAS SEÇÕES */
 
   .services{
-    padding:70px 5%;
+    padding:45px 5%;
   }
+
+  /* IMAGEM DOS CÍLIOS */
 
   .lashes-bg{
     background-image:url('/assets/tufos03.png');
-    background-size:100% auto;
+    background-size:85% auto;
     background-position:center top;
     background-repeat:no-repeat;
     background-attachment:scroll;
   }
 
-  /* AJUSTE DOS CARDS */
+  /* CARDS MAIS COMPACTOS */
 
-  .card{
-    min-height:250px;
-    padding:25px 20px;
+  .cards{
+    gap:20px;
   }
 
+  .card{
+    min-height:200px;
+    padding:20px 15px;
+    border-radius:18px;
+  }
+
+  .card i{
+    font-size:2.2rem;
+    margin-bottom:12px;
+  }
+
+  .card h3{
+    font-size:1.1rem;
+    margin-bottom:10px;
+  }
+
+  .card p{
+    font-size:.95rem;
+    line-height:1.4;
+  }
+
+  /* CONTATO */
+
+  .contact{
+    padding:70px 5% 120px;
+  }
+
+  .contact-info{
+    gap:15px;
+    font-size:1rem;
+  }
+
+  /* WHATSAPP MENOR E MAIS AFASTADO */
+
+  .floating-whatsapp{
+    width:55px;
+    height:55px;
+    font-size:1.5rem;
+
+    right:15px;
+    bottom:15px;
+  }
 
 }
