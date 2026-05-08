@@ -168,8 +168,6 @@ body{
   background-position:center;
   background-repeat:no-repeat;
   background-attachment:scroll;
-
-  min-height:60vh;
 }
 
 /* OVERLAY */
