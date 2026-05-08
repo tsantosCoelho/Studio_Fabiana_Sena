@@ -373,4 +373,26 @@ footer{
     font-size:2rem;
   }
 
+    /* AJUSTE DA SEÇÃO DE CÍLIOS */
+
+  .services{
+    padding:70px 5%;
+  }
+
+  .lashes-bg{
+    background-image:url('/assets/tufos03.png');
+    background-size:100% auto;
+    background-position:center top;
+    background-repeat:no-repeat;
+    background-attachment:scroll;
+  }
+
+  /* AJUSTE DOS CARDS */
+
+  .card{
+    min-height:250px;
+    padding:25px 20px;
+  }
+
+
 }
