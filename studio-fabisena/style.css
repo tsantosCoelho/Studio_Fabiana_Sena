@@ -13,9 +13,9 @@ body{
   color:rgb(255, 255, 255);
   background:#000;
   text-shadow:
-    0 0 10px rgba(0,0,0,.8),
-    0 0 20px rgba(0,0,0,.7),
-    2px 2px 5px rgba(0,0,0,.9);
+    0 0 10px rgba(0, 0, 0, 0.904),
+    0 0 20px rgba(0, 0, 0, 0.916),
+    2px 2px 5px rgba(0, 0, 0, 0.968);
 }
 
 /* NAVBAR */
@@ -130,21 +130,20 @@ body{
 
 .nails-bg{
   background-image:url('https://images.unsplash.com/photo-1610992015732-2449b76344bc?q=80&w=1974&auto=format&fit=crop');
-  
+ 
 }
 
 .lashes-bg{
-  background-image:url('/assets/tufos0.png');
+  background-image:url('/assets/tufos03.png');
   background-size: 70%;
-  background-position:center center;
-  background-repeat:no-repeat;
-  background-attachment:fixed;
+ 
+ 
 }
 
 .overlay-section{
   position:absolute;
   inset:0;
-  background:rgba(0,0,0,.65);
+  background:rgba(0, 0, 0, 0.123);
 }
 
 .content{
@@ -162,7 +161,7 @@ body{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
   gap:30px;
-  
+ 
 }
 
 /* CARDS */
@@ -197,7 +196,7 @@ body{
   content:"";
   position:absolute;
   inset:0;
-  
+ 
   z-index:1;
 }
 
@@ -218,7 +217,7 @@ body{
   font-size:3rem;
   margin-bottom:20px;
   color:#ff77aa;
-  
+ 
 }
 
 .card h3{
@@ -236,21 +235,21 @@ body{
 linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.35)),
 url('/assets/f1.png');
     border:1px solid rgb(255, 255, 255);
-    
+   
 }
-.nails-bg .card:nth-child(2){ 
+.nails-bg .card:nth-child(2){
   background-image:
 linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.35)),
 url('/assets/gel.png');
     border:1px solid rgb(255, 255, 255);
-    
+   
 }
 
-.nails-bg .card:nth-child(3){ 
+.nails-bg .card:nth-child(3){
    background-image:
 linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.35)),
 url('/assets/blind.png');
-   border:1px solid rgb(255, 255, 255); 
+   border:1px solid rgb(255, 255, 255);
    
 }
 
