@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -23,14 +25,22 @@
         content="nosniff"
     >
 
-    <title>Studio Fabiana Sena - Agendamentos</title>
+    <title>
+        Studio Fabiana Sena - Agendamentos
+    </title>
 
-    <link rel="stylesheet" href="/style.css">
+    <link
+        rel="stylesheet"
+        href="/style.css"
+    >
+
 </head>
+
 
 <body>
 
 <main class="container">
+
 
     <!-- CABEÇALHO -->
 
@@ -57,12 +67,16 @@
 
         <p>
             Atendimento das
-            <strong>09:00 às 19:00</strong>.
+            <strong>
+                09:00 às 19:00
+            </strong>.
         </p>
 
         <p>
             Pausa para almoço:
-            <strong>12:00 às 13:00</strong>.
+            <strong>
+                12:00 às 13:00
+            </strong>.
         </p>
 
         <p>
@@ -81,9 +95,11 @@
             1. Escolha o serviço
         </h2>
 
+
         <label for="service">
             Serviço
         </label>
+
 
         <select id="service">
 
@@ -91,45 +107,56 @@
                 Selecione um serviço
             </option>
 
+
             <option value="Alongamento em gel - Primeira colocação">
                 Alongamento em gel - Primeira colocação — R$ 130
             </option>
+
 
             <option value="Alongamento em gel - Manutenção">
                 Alongamento em gel - Manutenção — R$ 90
             </option>
 
+
             <option value="Banho em gel - Primeira colocação">
                 Banho em gel - Primeira colocação — R$ 100
             </option>
+
 
             <option value="Banho em gel - Manutenção">
                 Banho em gel - Manutenção — R$ 85
             </option>
 
+
             <option value="Blindagem">
                 Blindagem — R$ 70
             </option>
+
 
             <option value="Manicure tradicional - Mão">
                 Manicure tradicional - Mão — R$ 30
             </option>
 
+
             <option value="Manicure tradicional - Pé">
                 Manicure tradicional - Pé — R$ 30
             </option>
+
 
             <option value="Manicure tradicional - Mão e pé">
                 Manicure tradicional - Mão e pé — R$ 60
             </option>
 
+
             <option value="Esmaltação em gel - Mão">
                 Esmaltação em gel - Mão — R$ 60
             </option>
 
+
             <option value="Esmaltação em gel - Pé">
                 Esmaltação em gel - Pé — R$ 70
             </option>
+
 
             <option value="Esmaltação em gel - Mão e pé">
                 Esmaltação em gel - Mão e pé — R$ 130
@@ -148,14 +175,17 @@
             2. Escolha a data
         </h2>
 
+
         <label for="date">
             Data
         </label>
+
 
         <input
             type="date"
             id="date"
         >
+
 
         <div
             id="availability"
@@ -175,14 +205,20 @@
             3. Escolha o horário
         </h2>
 
+
         <p>
             Horário de atendimento:
-            <strong>09:00 às 19:00</strong>
+            <strong>
+                09:00 às 19:00
+            </strong>
         </p>
+
 
         <p>
             Pausa para almoço:
-            <strong>12:00 às 13:00</strong>
+            <strong>
+                12:00 às 13:00
+            </strong>
         </p>
 
 
@@ -190,6 +226,7 @@
             id="times"
             class="times"
         >
+
 
             <button
                 type="button"
@@ -203,9 +240,9 @@
             <button
                 type="button"
                 class="time"
-                data-time="13:30"
+                data-time="13:00"
             >
-                13:30
+                13:00
             </button>
 
 
@@ -240,6 +277,7 @@
                 Informe o horário desejado
             </label>
 
+
             <input
                 type="time"
                 id="customTime"
@@ -247,10 +285,12 @@
                 max="18:59"
             >
 
+
             <small>
                 Atendimento das 09:00 às 19:00.
                 A pausa para almoço é das 12:00 às 13:00.
             </small>
+
 
             <div
                 id="customTimeMessage"
@@ -277,6 +317,7 @@
             Nome
         </label>
 
+
         <input
             type="text"
             id="name"
@@ -289,6 +330,7 @@
         <label for="phone">
             WhatsApp
         </label>
+
 
         <input
             type="tel"
@@ -308,7 +350,7 @@
         </button>
 
 
-        <!-- Honeypot anti-bot -->
+        <!-- HONEYPOT -->
 
         <div
             class="honeypot"
@@ -318,6 +360,7 @@
             <label for="website">
                 Não preencher
             </label>
+
 
             <input
                 type="text"
@@ -372,6 +415,7 @@
         aria-live="polite"
     ></div>
 
+
 </main>
 
 
@@ -380,5 +424,7 @@
     defer
 ></script>
 
+
 </body>
+
 </html>
