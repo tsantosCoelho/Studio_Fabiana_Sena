@@ -1,11 +1,20 @@
 "use strict";
 
-const service = document.getElementById("service");
-const date = document.getElementById("date");
-const nameInput = document.getElementById("name");
-const phoneInput = document.getElementById("phone");
 
-const times = document.querySelectorAll(".time");
+const service =
+    document.getElementById("service");
+
+const date =
+    document.getElementById("date");
+
+const nameInput =
+    document.getElementById("name");
+
+const phoneInput =
+    document.getElementById("phone");
+
+const times =
+    document.querySelectorAll(".time");
 
 const customTimeContainer =
     document.getElementById("customTimeContainer");
@@ -25,19 +34,35 @@ const message =
 const website =
     document.getElementById("website");
 
+const clearCustomerData =
+    document.getElementById("clearCustomerData");
+
 
 let selectedTime = null;
+
 let occupiedTimes = [];
 
 
 /*
- * Data mínima = hoje
+ * CHAVE DOS DADOS SALVOS
+ *
+ * Esses dados ficam somente
+ * no navegador da cliente.
+ */
+const CUSTOMER_STORAGE_KEY =
+    "studio_fabiana_sena_cliente";
+
+
+/*
+ * DATA DE HOJE
  */
 function getToday() {
 
-    const now = new Date();
+    const now =
+        new Date();
 
-    const year = now.getFullYear();
+    const year =
+        now.getFullYear();
 
     const month =
         String(now.getMonth() + 1)
@@ -51,78 +76,398 @@ function getToday() {
 }
 
 
-date.min = getToday();
+/*
+ * HORA ATUAL
+ */
+function getCurrentTime() {
+
+    const now =
+        new Date();
+
+    const hours =
+        String(now.getHours())
+            .padStart(2, "0");
+
+    const minutes =
+        String(now.getMinutes())
+            .padStart(2, "0");
+
+    return `${hours}:${minutes}`;
+}
 
 
 /*
- * Mensagens
+ * Verifica se o horário
+ * já passou hoje.
  */
-function showMessage(text, type = "error") {
+function isPastTime(
+    selectedDate,
+    selectedTime
+) {
 
-    message.textContent = text;
+    if (
+        selectedDate !== getToday()
+    ) {
+
+        return false;
+
+    }
+
+    return (
+        selectedTime <=
+        getCurrentTime()
+    );
+
+}
+
+
+/*
+ * Data mínima = hoje
+ */
+date.min =
+    getToday();
+
+
+/*
+ * MENSAGENS
+ */
+function showMessage(
+    text,
+    type = "error"
+) {
+
+    message.textContent =
+        text;
 
     message.className =
         `message show ${type}`;
+
 }
 
 
 /*
- * Limpa mensagens
+ * LIMPA MENSAGEM
  */
 function clearMessage() {
 
-    message.textContent = "";
+    message.textContent =
+        "";
 
-    message.className = "message";
+    message.className =
+        "message";
+
 }
 
 
 /*
- * Selecionar horário
+ * SALVA DADOS DA CLIENTE
+ *
+ * Fica somente neste navegador.
+ */
+function saveCustomerData() {
+
+    const customerName =
+        nameInput.value.trim();
+
+    const customerPhone =
+        phoneInput.value.trim();
+
+
+    /*
+     * Só salva quando existe
+     * alguma informação.
+     */
+    if (
+        !customerName &&
+        !customerPhone
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        localStorage.setItem(
+
+            CUSTOMER_STORAGE_KEY,
+
+            JSON.stringify({
+
+                name:
+                    customerName,
+
+                phone:
+                    customerPhone
+
+            })
+
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "Não foi possível salvar os dados no navegador.",
+            error
+        );
+
+    }
+
+}
+
+
+/*
+ * CARREGA DADOS SALVOS
+ */
+function loadCustomerData() {
+
+    try {
+
+        const saved =
+            localStorage.getItem(
+                CUSTOMER_STORAGE_KEY
+            );
+
+
+        if (!saved) {
+
+            return;
+
+        }
+
+
+        const customer =
+            JSON.parse(saved);
+
+
+        if (
+            customer &&
+            typeof customer.name === "string"
+        ) {
+
+            nameInput.value =
+                customer.name;
+
+        }
+
+
+        if (
+            customer &&
+            typeof customer.phone === "string"
+        ) {
+
+            phoneInput.value =
+                customer.phone;
+
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "Não foi possível carregar os dados salvos.",
+            error
+        );
+
+    }
+
+}
+
+
+/*
+ * LIMPA DADOS SALVOS
+ */
+function clearSavedCustomerData() {
+
+    try {
+
+        localStorage.removeItem(
+            CUSTOMER_STORAGE_KEY
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "Não foi possível limpar os dados.",
+            error
+        );
+
+    }
+
+
+    nameInput.value =
+        "";
+
+    phoneInput.value =
+        "";
+
+
+    showMessage(
+        "Seus dados salvos foram apagados.",
+        "success"
+    );
+
+}
+
+
+/*
+ * CARREGA OS DADOS
+ * assim que a página abre.
+ */
+loadCustomerData();
+
+
+/*
+ * SALVA NOME ENQUANTO DIGITA.
+ */
+nameInput.addEventListener(
+    "input",
+    () => {
+
+        nameInput.value =
+            nameInput.value
+                .replace(
+                    /[\u0000-\u001F\u007F]/g,
+                    ""
+                )
+                .slice(0, 80);
+
+
+        saveCustomerData();
+
+    }
+);
+
+
+/*
+ * TELEFONE
+ */
+phoneInput.addEventListener(
+    "input",
+    () => {
+
+        phoneInput.value =
+            phoneInput.value
+                .replace(
+                    /[^\d+()\-\s]/g,
+                    ""
+                )
+                .slice(0, 20);
+
+
+        saveCustomerData();
+
+    }
+);
+
+
+/*
+ * BOTÃO PARA APAGAR DADOS
+ */
+if (clearCustomerData) {
+
+    clearCustomerData.addEventListener(
+        "click",
+        clearSavedCustomerData
+    );
+
+}
+
+
+/*
+ * SELECIONAR HORÁRIO
  */
 times.forEach(button => {
 
-    button.addEventListener("click", () => {
+    button.addEventListener(
+        "click",
+        () => {
 
-        if (
-            button.disabled ||
-            button.classList.contains("unavailable")
-        ) {
-            return;
+            if (
+                button.disabled ||
+                button.classList.contains(
+                    "unavailable"
+                )
+            ) {
+
+                return;
+
+            }
+
+
+            const buttonTime =
+                button.dataset.time;
+
+
+            /*
+             * Não permite selecionar
+             * horário que já passou.
+             */
+            if (
+                buttonTime !== "OUTRO" &&
+                isPastTime(
+                    date.value,
+                    buttonTime
+                )
+            ) {
+
+                showMessage(
+                    "Esse horário já passou. Escolha outro horário."
+                );
+
+                return;
+
+            }
+
+
+            times.forEach(item => {
+
+                item.classList.remove(
+                    "selected"
+                );
+
+            });
+
+
+            button.classList.add(
+                "selected"
+            );
+
+
+            selectedTime =
+                buttonTime;
+
+
+            if (
+                selectedTime === "OUTRO"
+            ) {
+
+                customTimeContainer
+                    .classList
+                    .remove("hidden");
+
+            } else {
+
+                customTimeContainer
+                    .classList
+                    .add("hidden");
+
+                customTime.value =
+                    "";
+
+            }
+
+
+            clearMessage();
+
         }
-
-        times.forEach(item => {
-            item.classList.remove("selected");
-        });
-
-        button.classList.add("selected");
-
-        selectedTime =
-            button.dataset.time;
-
-        if (selectedTime === "OUTRO") {
-
-            customTimeContainer
-                .classList
-                .remove("hidden");
-
-        } else {
-
-            customTimeContainer
-                .classList
-                .add("hidden");
-
-            customTime.value = "";
-        }
-
-        clearMessage();
-    });
+    );
 
 });
 
 
 /*
- * Busca disponibilidade
+ * BUSCA DISPONIBILIDADE
  */
 async function loadAvailability() {
 
@@ -132,55 +477,92 @@ async function loadAvailability() {
             "Selecione uma data.";
 
         return;
+
     }
+
 
     availability.textContent =
         "Verificando disponibilidade...";
 
+
     times.forEach(button => {
 
-        button.disabled = false;
+        button.disabled =
+            false;
 
         button.classList.remove(
             "unavailable",
             "selected"
         );
+
     });
 
-    selectedTime = null;
+
+    selectedTime =
+        null;
+
 
     customTimeContainer
         .classList
         .add("hidden");
 
+
+    customTime.value =
+        "";
+
+
     try {
 
         const response =
             await fetch(
-                `/api/availability?date=${encodeURIComponent(date.value)}`,
+
+                `/api/availability?date=${encodeURIComponent(
+                    date.value
+                )}`,
+
                 {
-                    method: "GET",
+
+                    method:
+                        "GET",
+
                     headers: {
-                        "Accept": "application/json"
+
+                        "Accept":
+                            "application/json"
+
                     },
-                    cache: "no-store"
+
+                    cache:
+                        "no-store"
+
                 }
+
             );
 
+
         if (!response.ok) {
-            throw new Error("Falha ao consultar disponibilidade.");
+
+            throw new Error(
+                "Falha ao consultar disponibilidade."
+            );
+
         }
+
 
         const data =
             await response.json();
 
+
         occupiedTimes =
-            Array.isArray(data.occupied)
+            Array.isArray(
+                data.occupied
+            )
                 ? data.occupied
                 : [];
 
 
-        let availableCount = 0;
+        let availableCount =
+            0;
 
 
         times.forEach(button => {
@@ -188,30 +570,66 @@ async function loadAvailability() {
             const time =
                 button.dataset.time;
 
-            if (time === "OUTRO") {
+
+            if (
+                time === "OUTRO"
+            ) {
+
                 return;
+
             }
 
-            if (occupiedTimes.includes(time)) {
 
-                button.disabled = true;
+            /*
+             * Horário já reservado.
+             */
+            const isOccupied =
+                occupiedTimes.includes(
+                    time
+                );
+
+
+            /*
+             * Horário já passado hoje.
+             */
+            const isPast =
+                isPastTime(
+                    date.value,
+                    time
+                );
+
+
+            if (
+                isOccupied ||
+                isPast
+            ) {
+
+                button.disabled =
+                    true;
 
                 button.classList.add(
                     "unavailable"
                 );
 
+
             } else {
 
                 availableCount++;
+
             }
 
         });
 
 
-        if (availableCount === 0) {
+        /*
+         * Mensagem de disponibilidade.
+         */
+        if (
+            availableCount === 0
+        ) {
 
             availability.textContent =
-                "Os horários principais deste dia estão preenchidos. Você pode solicitar outro horário.";
+                "Os horários principais deste dia estão preenchidos ou já passaram. Você pode solicitar outro horário.";
 
         } else {
 
@@ -220,16 +638,25 @@ async function loadAvailability() {
 
         }
 
+
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            error
+        );
+
 
         availability.textContent =
             "Não foi possível consultar os horários. Tente novamente.";
+
     }
+
 }
 
 
+/*
+ * ATUALIZA QUANDO A DATA MUDA
+ */
 date.addEventListener(
     "change",
     loadAvailability
@@ -237,37 +664,53 @@ date.addEventListener(
 
 
 /*
- * Telefone
+ * Quando a página volta a ficar ativa,
+ * atualiza os horários.
+ *
+ * Isso é importante se a cliente
+ * deixar a página aberta por algumas horas.
  */
-phoneInput.addEventListener(
-    "input",
+document.addEventListener(
+    "visibilitychange",
     () => {
 
-        phoneInput.value =
-            phoneInput.value
-                .replace(/[^\d+()\-\s]/g, "")
-                .slice(0, 20);
+        if (
+            !document.hidden &&
+            date.value
+        ) {
+
+            loadAvailability();
+
+        }
+
     }
 );
 
 
 /*
- * Nome
+ * Atualiza a disponibilidade
+ * periodicamente.
+ *
+ * A cada 60 segundos.
  */
-nameInput.addEventListener(
-    "input",
+setInterval(
     () => {
 
-        nameInput.value =
-            nameInput.value
-                .replace(/[\u0000-\u001F\u007F]/g, "")
-                .slice(0, 80);
-    }
+        if (
+            date.value
+        ) {
+
+            loadAvailability();
+
+        }
+
+    },
+    60000
 );
 
 
 /*
- * Agendamento
+ * AGENDAMENTO
  */
 bookButton.addEventListener(
     "click",
@@ -279,31 +722,37 @@ bookButton.addEventListener(
         /*
          * Honeypot
          */
-        if (website.value.trim() !== "") {
+        if (
+            website.value.trim() !== ""
+        ) {
 
             showMessage(
                 "Não foi possível realizar o agendamento."
             );
 
             return;
+
         }
 
 
         const selectedService =
             service.value.trim();
 
+
         const selectedDate =
             date.value.trim();
 
+
         const customerName =
             nameInput.value.trim();
+
 
         const customerPhone =
             phoneInput.value.trim();
 
 
         /*
-         * Validação básica
+         * VALIDA SERVIÇO
          */
         if (!selectedService) {
 
@@ -312,9 +761,13 @@ bookButton.addEventListener(
             );
 
             return;
+
         }
 
 
+        /*
+         * VALIDA DATA
+         */
         if (!selectedDate) {
 
             showMessage(
@@ -322,9 +775,13 @@ bookButton.addEventListener(
             );
 
             return;
+
         }
 
 
+        /*
+         * VALIDA HORÁRIO
+         */
         if (!selectedTime) {
 
             showMessage(
@@ -332,6 +789,7 @@ bookButton.addEventListener(
             );
 
             return;
+
         }
 
 
@@ -339,10 +797,16 @@ bookButton.addEventListener(
             selectedTime;
 
 
-        if (selectedTime === "OUTRO") {
+        /*
+         * OUTRO HORÁRIO
+         */
+        if (
+            selectedTime === "OUTRO"
+        ) {
 
             finalTime =
                 customTime.value.trim();
+
 
             if (!finalTime) {
 
@@ -351,22 +815,76 @@ bookButton.addEventListener(
                 );
 
                 return;
+
             }
+
         }
 
 
-        if (customerName.length < 2) {
+        /*
+         * Validação básica
+         * do formato da hora.
+         */
+        if (
+            !/^\d{2}:\d{2}$/.test(
+                finalTime
+            )
+        ) {
+
+            showMessage(
+                "Informe um horário válido."
+            );
+
+            return;
+
+        }
+
+
+        /*
+         * Não permite horário passado.
+         */
+        if (
+            isPastTime(
+                selectedDate,
+                finalTime
+            )
+        ) {
+
+            showMessage(
+                "Esse horário já passou. Escolha outro horário."
+            );
+
+            await loadAvailability();
+
+            return;
+
+        }
+
+
+        /*
+         * VALIDA NOME
+         */
+        if (
+            customerName.length < 2
+        ) {
 
             showMessage(
                 "Digite seu nome completo."
             );
 
             return;
+
         }
 
 
+        /*
+         * VALIDA WHATSAPP
+         */
         const phoneDigits =
-            customerPhone.replace(/\D/g, "");
+            customerPhone.replace(
+                /\D/g,
+                ""
+            );
 
 
         if (
@@ -379,11 +897,12 @@ bookButton.addEventListener(
             );
 
             return;
+
         }
 
 
         /*
-         * Confirma data
+         * CONFIRMA DATA
          */
         if (
             selectedDate <
@@ -395,28 +914,42 @@ bookButton.addEventListener(
             );
 
             return;
+
         }
 
 
         /*
-         * Bloqueia horário já ocupado
+         * BLOQUEIA HORÁRIO FIXO
+         * que já foi carregado como ocupado.
          */
         if (
             selectedTime !== "OUTRO" &&
-            occupiedTimes.includes(finalTime)
+            occupiedTimes.includes(
+                finalTime
+            )
         ) {
 
             showMessage(
-                "Esse horário acabou de ser ocupado. Atualize a página e escolha outro."
+                "Esse horário acabou de ser ocupado. Atualize os horários e escolha outro."
             );
 
             await loadAvailability();
 
             return;
+
         }
 
 
-        bookButton.disabled = true;
+        /*
+         * Salva novamente os dados
+         * antes de enviar.
+         */
+        saveCustomerData();
+
+
+        bookButton.disabled =
+            true;
+
 
         bookButton.textContent =
             "Enviando...";
@@ -428,36 +961,44 @@ bookButton.addEventListener(
                 await fetch(
                     "/api/book",
                     {
-                        method: "POST",
+
+                        method:
+                            "POST",
 
                         headers: {
+
                             "Content-Type":
                                 "application/json",
 
                             "Accept":
                                 "application/json"
+
                         },
 
-                        body: JSON.stringify({
+                        body:
+                            JSON.stringify({
 
-                            service:
-                                selectedService,
+                                service:
+                                    selectedService,
 
-                            date:
-                                selectedDate,
+                                date:
+                                    selectedDate,
 
-                            time:
-                                finalTime,
+                                time:
+                                    finalTime,
 
-                            name:
-                                customerName,
+                                name:
+                                    customerName,
 
-                            phone:
-                                customerPhone,
+                                phone:
+                                    customerPhone,
 
-                            customTime:
-                                selectedTime === "OUTRO"
-                        })
+                                customTime:
+                                    selectedTime ===
+                                    "OUTRO"
+
+                            })
+
                     }
                 );
 
@@ -469,48 +1010,81 @@ bookButton.addEventListener(
             if (!response.ok) {
 
                 throw new Error(
+
                     data.message ||
                     "Não foi possível realizar o agendamento."
+
                 );
+
             }
 
 
+            /*
+             * Atualiza a disponibilidade
+             * imediatamente.
+             */
+            await loadAvailability();
+
+
             showMessage(
+
                 "Agendamento registrado! Você será direcionada ao WhatsApp para aguardar a confirmação da Fabi.",
+
                 "success"
+
             );
 
 
             /*
-             * O número da Fabi nunca esteve no JavaScript público.
-             * O servidor retorna o redirecionamento.
+             * WhatsApp.
              */
-            if (data.whatsappUrl) {
+            if (
+                data.whatsappUrl
+            ) {
 
-                setTimeout(() => {
+                setTimeout(
+                    () => {
 
-                    window.location.href =
-                        data.whatsappUrl;
+                        window.location.href =
+                            data.whatsappUrl;
 
-                }, 500);
+                    },
+                    500
+                );
+
             }
 
 
         } catch (error) {
 
-            console.error(error);
+            console.error(
+                error
+            );
+
 
             showMessage(
+
                 error.message ||
                 "Erro ao realizar o agendamento."
+
             );
+
+
+            /*
+             * Atualiza a disponibilidade
+             * caso tenha ocorrido conflito.
+             */
+            await loadAvailability();
+
 
         } finally {
 
-            bookButton.disabled = false;
+            bookButton.disabled =
+                false;
 
             bookButton.textContent =
                 "Agendar pelo WhatsApp";
+
         }
 
     }
