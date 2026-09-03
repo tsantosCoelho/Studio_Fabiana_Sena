@@ -1,53 +1,56 @@
 export default async function handler(req, res) {
+    // ==========================================
+    // SOMENTE POST
+    // ==========================================
 
     if (req.method !== "POST") {
-
         return res.status(405).json({
+            success: false,
             message: "Método não permitido."
         });
     }
 
+    // ==========================================
+    // VARIÁVEIS DE AMBIENTE
+    // ==========================================
 
-    const backendUrl =
-        process.env.APPS_SCRIPT_URL;
-
-    const backendToken =
-        process.env.BACKEND_TOKEN;
-
+    const backendUrl = process.env.APPS_SCRIPT_URL;
+    const backendToken = process.env.BACKEND_TOKEN;
 
     if (!backendUrl || !backendToken) {
-
-        console.error(
-            "Variáveis de ambiente não configuradas."
-        );
+        console.error("Variáveis de ambiente não configuradas.");
 
         return res.status(500).json({
+            success: false,
             message: "Erro interno."
         });
     }
 
+    // ==========================================
+    // LER BODY
+    // ==========================================
 
     let body;
 
-
     try {
-
-        body =
-            typeof req.body === "object"
-                ? req.body
-                : JSON.parse(req.body || "{}");
-
-    } catch {
+        if (typeof req.body === "object" && req.body !== null) {
+            body = req.body;
+        } else {
+            body = JSON.parse(req.body || "{}");
+        }
+    } catch (error) {
+        console.error("Erro ao interpretar body:", error);
 
         return res.status(400).json({
+            success: false,
             message: "Dados inválidos."
         });
     }
 
+    // ==========================================
+    // LIMPAR E LIMITAR DADOS
+    // ==========================================
 
-    /*
-     * Limites antes de enviar ao backend
-     */
     const service =
         typeof body.service === "string"
             ? body.service.trim().slice(0, 100)
@@ -76,137 +79,198 @@ export default async function handler(req, res) {
     const customTime =
         body.customTime === true;
 
+    // ==========================================
+    // CAMPOS OBRIGATÓRIOS
+    // ==========================================
 
     if (!service || !date || !time || !name || !phone) {
-
         return res.status(400).json({
-            message:
-                "Preencha todos os campos."
+            success: false,
+            message: "Preencha todos os campos."
         });
     }
 
+    // ==========================================
+    // VALIDAR DATA
+    // ==========================================
 
-    /*
-     * Formato da data
-     */
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-
         return res.status(400).json({
+            success: false,
             message: "Data inválida."
         });
     }
 
+    // ==========================================
+    // VALIDAR HORÁRIO
+    // ==========================================
 
-    /*
-     * Formato de horário
-     */
     if (!/^\d{2}:\d{2}$/.test(time)) {
-
         return res.status(400).json({
+            success: false,
             message: "Horário inválido."
         });
     }
 
+    // ==========================================
+    // VALIDAR HORA REAL
+    // Evita coisas como 99:99
+    // ==========================================
 
-    /*
-     * Nome sem caracteres de controle
-     */
-    if (/[\u0000-\u001F\u007F]/.test(name)) {
+    const [hours, minutes] = time.split(":").map(Number);
 
+    if (
+        hours < 0 ||
+        hours > 23 ||
+        minutes < 0 ||
+        minutes > 59
+    ) {
         return res.status(400).json({
+            success: false,
+            message: "Horário inválido."
+        });
+    }
+
+    // ==========================================
+    // VALIDAR NOME
+    // ==========================================
+
+    if (/[\u0000-\u001F\u007F]/.test(name)) {
+        return res.status(400).json({
+            success: false,
             message: "Nome inválido."
         });
     }
 
+    if (name.length < 2) {
+        return res.status(400).json({
+            success: false,
+            message: "Nome inválido."
+        });
+    }
 
-    /*
-     * WhatsApp
-     */
-    const phoneDigits =
-        phone.replace(/\D/g, "");
+    // ==========================================
+    // VALIDAR WHATSAPP
+    // ==========================================
 
+    const phoneDigits = phone.replace(/\D/g, "");
 
     if (
         phoneDigits.length < 10 ||
         phoneDigits.length > 13
     ) {
-
         return res.status(400).json({
+            success: false,
             message: "WhatsApp inválido."
         });
     }
 
+    // ==========================================
+    // ENVIAR PARA GOOGLE APPS SCRIPT
+    // ==========================================
 
     try {
+        const payload = {
+            action: "book",
 
-        const response =
-            await fetch(
-                backendUrl,
-                {
-                    method: "POST",
+            // Token fica SOMENTE no servidor
+            token: backendToken,
 
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
+            service,
+            date,
+            time,
+            name,
+            phone,
+            customTime
+        };
 
-                    body: JSON.stringify({
+        console.log("Enviando agendamento para Apps Script:", {
+            service,
+            date,
+            time,
+            name,
+            phoneLength: phoneDigits.length,
+            customTime
+        });
 
-                        action:
-                            "book",
+        const response = await fetch(backendUrl, {
+            method: "POST",
 
-                        token:
-                            backendToken,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
 
-                        service,
-                        date,
-                        time,
-                        name,
-                        phone,
-                        customTime
+            body: JSON.stringify(payload)
+        });
 
-                    })
-                }
+        // ==========================================
+        // LER RESPOSTA DO APPS SCRIPT
+        // ==========================================
+
+        const responseText = await response.text();
+
+        console.log(
+            "Resposta do Google Apps Script:",
+            response.status,
+            responseText
+        );
+
+        let data;
+
+        try {
+            data = JSON.parse(responseText);
+        } catch (error) {
+            console.error(
+                "Apps Script não retornou JSON válido:",
+                responseText
             );
 
+            return res.status(502).json({
+                success: false,
+                message:
+                    "O sistema de agendamento retornou uma resposta inválida."
+            });
+        }
 
-        const data =
-            await response.json();
-
+        // ==========================================
+        // ERRO RETORNADO PELO APPS SCRIPT
+        // ==========================================
 
         if (!response.ok || !data.success) {
+            console.error(
+                "Erro retornado pelo Apps Script:",
+                data
+            );
 
-            return res.status(
-                response.status >= 400
-                    ? response.status
-                    : 400
-            ).json({
+            return res.status(400).json({
+                success: false,
                 message:
                     data.message ||
                     "Não foi possível realizar o agendamento."
             });
         }
 
+        // ==========================================
+        // SUCESSO
+        // ==========================================
 
-        /*
-         * O backend cria a URL do WhatsApp.
-         */
         return res.status(200).json({
-
             success: true,
-
             whatsappUrl:
-                data.whatsappUrl
+                data.whatsappUrl || null
         });
 
-
     } catch (error) {
-
-        console.error(error);
+        console.error(
+            "Erro ao comunicar com Apps Script:",
+            error
+        );
 
         return res.status(502).json({
+            success: false,
             message:
-                "Erro ao comunicar com o sistema."
+                "Erro ao comunicar com o sistema de agendamento."
         });
     }
 }
