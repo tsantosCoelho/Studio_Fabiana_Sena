@@ -1,23 +1,30 @@
 export default async function handler(req, res) {
 
     if (req.method !== "GET") {
+
         return res.status(405).json({
             success: false,
             message: "Método não permitido."
         });
     }
 
+
     const date =
         typeof req.query.date === "string"
             ? req.query.date.trim()
             : "";
 
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+
+    if (
+        !/^\d{4}-\d{2}-\d{2}$/.test(date)
+    ) {
+
         return res.status(400).json({
             success: false,
             message: "Data inválida."
         });
     }
+
 
     const backendUrl =
         process.env.APPS_SCRIPT_URL;
@@ -25,7 +32,11 @@ export default async function handler(req, res) {
     const backendToken =
         process.env.BACKEND_TOKEN;
 
-    if (!backendUrl || !backendToken) {
+
+    if (
+        !backendUrl ||
+        !backendToken
+    ) {
 
         console.error(
             "APPS_SCRIPT_URL ou BACKEND_TOKEN não configurado."
@@ -37,61 +48,59 @@ export default async function handler(req, res) {
         });
     }
 
+
     try {
 
         /*
-         * Timestamp evita que qualquer camada
-         * intermediária reutilize uma resposta antiga.
+         * Timestamp para impedir cache.
          */
-        const cacheBuster =
-            Date.now().toString();
-
-        const separator =
-            backendUrl.includes("?")
-                ? "&"
-                : "?";
 
         const url =
             `${backendUrl}` +
-            `${separator}action=availability` +
+            `?action=availability` +
             `&date=${encodeURIComponent(date)}` +
             `&token=${encodeURIComponent(backendToken)}` +
-            `&_=${cacheBuster}`;
+            `&_=${Date.now()}`;
+
 
         console.log(
             "Consultando disponibilidade:",
             date
         );
 
+
         const response =
-            await fetch(url, {
-                method: "GET",
+            await fetch(
+                url,
+                {
+                    method: "GET",
 
-                headers: {
-                    "Accept":
-                        "application/json",
+                    headers: {
+                        "Accept":
+                            "application/json",
 
-                    "Cache-Control":
-                        "no-cache, no-store, must-revalidate",
+                        "Cache-Control":
+                            "no-cache"
+                    },
 
-                    "Pragma":
-                        "no-cache"
-                },
+                    cache: "no-store"
+                }
+            );
 
-                cache:
-                    "no-store"
-            });
 
         const responseText =
             await response.text();
 
+
         console.log(
-            "Resposta do Apps Script:",
+            "Resposta da disponibilidade:",
             response.status,
             responseText
         );
 
+
         let data;
+
 
         try {
 
@@ -103,7 +112,7 @@ export default async function handler(req, res) {
         } catch (error) {
 
             console.error(
-                "Apps Script retornou algo que não é JSON:",
+                "Resposta inválida do Apps Script:",
                 responseText
             );
 
@@ -114,13 +123,14 @@ export default async function handler(req, res) {
             });
         }
 
+
         if (
             !response.ok ||
             data.success === false
         ) {
 
             console.error(
-                "Erro retornado pelo Apps Script:",
+                "Erro na disponibilidade:",
                 data
             );
 
@@ -132,24 +142,11 @@ export default async function handler(req, res) {
             });
         }
 
-        const occupied =
-            Array.isArray(data.occupied)
-                ? data.occupied
-                    .map(time =>
-                        String(time).trim()
-                    )
-                    .filter(Boolean)
-                : [];
 
         /*
-         * Evita horários duplicados.
+         * Headers anti-cache.
          */
-        const uniqueOccupied =
-            [...new Set(occupied)];
 
-        /*
-         * Impede cache da resposta da Vercel.
-         */
         res.setHeader(
             "Cache-Control",
             "no-store, no-cache, must-revalidate, proxy-revalidate"
@@ -165,14 +162,20 @@ export default async function handler(req, res) {
             "0"
         );
 
+
         return res.status(200).json({
 
             success: true,
 
             occupied:
-                uniqueOccupied
+                Array.isArray(
+                    data.occupied
+                )
+                    ? data.occupied
+                    : []
 
         });
+
 
     } catch (error) {
 
@@ -180,6 +183,7 @@ export default async function handler(req, res) {
             "Erro ao consultar disponibilidade:",
             error
         );
+
 
         return res.status(502).json({
             success: false,
