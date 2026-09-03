@@ -1,29 +1,38 @@
 export default async function handler(req, res) {
+    // ==========================================
+    // SOMENTE GET
+    // ==========================================
 
     if (req.method !== "GET") {
-
         return res.status(405).json({
+            success: false,
             message: "Método não permitido."
         });
     }
 
+    // ==========================================
+    // DATA
+    // ==========================================
 
     const date =
         typeof req.query.date === "string"
-            ? req.query.date
+            ? req.query.date.trim()
             : "";
 
+    // ==========================================
+    // VALIDAR DATA
+    // ==========================================
 
-    /*
-     * Validação rigorosa de data
-     */
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-
         return res.status(400).json({
+            success: false,
             message: "Data inválida."
         });
     }
 
+    // ==========================================
+    // VARIÁVEIS DE AMBIENTE
+    // ==========================================
 
     const backendUrl =
         process.env.APPS_SCRIPT_URL;
@@ -31,68 +40,116 @@ export default async function handler(req, res) {
     const backendToken =
         process.env.BACKEND_TOKEN;
 
-
     if (!backendUrl || !backendToken) {
-
         console.error(
             "Variáveis de ambiente não configuradas."
         );
 
         return res.status(500).json({
+            success: false,
             message: "Erro interno."
         });
     }
 
+    // ==========================================
+    // CONSULTAR GOOGLE APPS SCRIPT
+    // ==========================================
 
     try {
-
         const url =
-            `${backendUrl}?action=availability` +
+            `${backendUrl}` +
+            `?action=availability` +
             `&date=${encodeURIComponent(date)}` +
             `&token=${encodeURIComponent(backendToken)}`;
 
+        console.log(
+            "Consultando disponibilidade:",
+            date
+        );
 
-        const response =
-            await fetch(url, {
-                method: "GET",
-                cache: "no-store"
-            });
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            },
+            cache: "no-store"
+        });
 
+        // ==========================================
+        // LER RESPOSTA
+        // ==========================================
 
-        if (!response.ok) {
+        const responseText =
+            await response.text();
 
-            throw new Error(
-                "Backend indisponível."
+        console.log(
+            "Resposta da disponibilidade:",
+            response.status,
+            responseText
+        );
+
+        let data;
+
+        try {
+            data = JSON.parse(responseText);
+        } catch (error) {
+            console.error(
+                "Resposta inválida do Apps Script:",
+                responseText
             );
+
+            return res.status(502).json({
+                success: false,
+                message:
+                    "O sistema de disponibilidade retornou uma resposta inválida."
+            });
         }
 
+        // ==========================================
+        // VERIFICAR ERRO DO BACKEND
+        // ==========================================
 
-        const data =
-            await response.json();
+        if (!response.ok || data.success === false) {
+            console.error(
+                "Erro na disponibilidade:",
+                data
+            );
 
+            return res.status(502).json({
+                success: false,
+                message:
+                    data.message ||
+                    "Não foi possível consultar os horários."
+            });
+        }
 
-        /*
-         * Retornamos somente horários ocupados.
-         *
-         * NUNCA:
-         * nome
-         * telefone
-         * observações
-         * dados da cliente
-         */
+        // ==========================================
+        // RETORNAR SOMENTE HORÁRIOS OCUPADOS
+        //
+        // NÃO RETORNAR:
+        // - nome
+        // - telefone
+        // - serviço
+        // - outros dados pessoais
+        // ==========================================
+
         return res.status(200).json({
+            success: true,
+
             occupied:
                 Array.isArray(data.occupied)
                     ? data.occupied
                     : []
         });
 
-
     } catch (error) {
-
-        console.error(error);
+        console.error(
+            "Erro ao consultar disponibilidade:",
+            error
+        );
 
         return res.status(502).json({
+            success: false,
             message:
                 "Não foi possível consultar os horários."
         });
