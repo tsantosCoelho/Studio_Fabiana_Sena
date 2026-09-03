@@ -21,9 +21,12 @@ export default async function handler(req, res) {
     const backendUrl =
         process.env.APPS_SCRIPT_URL;
 
-    if (!backendUrl) {
+    const backendToken =
+        process.env.BACKEND_TOKEN;
+
+    if (!backendUrl || !backendToken) {
         console.error(
-            "APPS_SCRIPT_URL não configurada."
+            "APPS_SCRIPT_URL ou BACKEND_TOKEN não configurado."
         );
 
         return res.status(500).json({
@@ -36,7 +39,8 @@ export default async function handler(req, res) {
         const url =
             `${backendUrl}` +
             `?action=availability` +
-            `&date=${encodeURIComponent(date)}`;
+            `&date=${encodeURIComponent(date)}` +
+            `&token=${encodeURIComponent(backendToken)}`;
 
         console.log(
             "Consultando disponibilidade:",
