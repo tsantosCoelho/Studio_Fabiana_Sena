@@ -1,6 +1,7 @@
 export default async function handler(req, res) {
 
-    if (req.method !== "POST") {
+    if (req.method !== "GET") {
+
         return res.status(405).json({
             success: false,
             message: "Método não permitido."
@@ -8,9 +9,23 @@ export default async function handler(req, res) {
     }
 
 
+    const date =
+        typeof req.query.date === "string"
+            ? req.query.date.trim()
+            : "";
+
+
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+
+        return res.status(400).json({
+            success: false,
+            message: "Data inválida."
+        });
+    }
+
+
     const backendUrl =
         process.env.APPS_SCRIPT_URL;
-
 
     const backendToken =
         process.env.BACKEND_TOKEN;
@@ -26,259 +41,43 @@ export default async function handler(req, res) {
             success: false,
             message: "Erro interno."
         });
-
-    }
-
-
-    let body;
-
-
-    try {
-
-        if (
-            typeof req.body === "object" &&
-            req.body !== null
-        ) {
-
-            body = req.body;
-
-        } else {
-
-            body =
-                JSON.parse(
-                    req.body || "{}"
-                );
-
-        }
-
-    } catch (error) {
-
-        console.error(
-            "Erro ao interpretar body:",
-            error
-        );
-
-        return res.status(400).json({
-            success: false,
-            message: "Dados inválidos."
-        });
-
-    }
-
-
-    const service =
-        typeof body.service === "string"
-            ? body.service
-                .trim()
-                .slice(0, 100)
-            : "";
-
-
-    const date =
-        typeof body.date === "string"
-            ? body.date.trim()
-            : "";
-
-
-    const time =
-        typeof body.time === "string"
-            ? body.time.trim()
-            : "";
-
-
-    const name =
-        typeof body.name === "string"
-            ? body.name
-                .trim()
-                .slice(0, 80)
-            : "";
-
-
-    const phone =
-        typeof body.phone === "string"
-            ? body.phone
-                .trim()
-                .slice(0, 20)
-            : "";
-
-
-    const customTime =
-        body.customTime === true;
-
-
-    if (
-        !service ||
-        !date ||
-        !time ||
-        !name ||
-        !phone
-    ) {
-
-        return res.status(400).json({
-            success: false,
-            message:
-                "Preencha todos os campos."
-        });
-
-    }
-
-
-    if (
-        !/^\d{4}-\d{2}-\d{2}$/.test(date)
-    ) {
-
-        return res.status(400).json({
-            success: false,
-            message:
-                "Data inválida."
-        });
-
-    }
-
-
-    if (
-        !/^\d{2}:\d{2}$/.test(time)
-    ) {
-
-        return res.status(400).json({
-            success: false,
-            message:
-                "Horário inválido."
-        });
-
-    }
-
-
-    const [
-        hours,
-        minutes
-    ] =
-        time
-            .split(":")
-            .map(Number);
-
-
-    if (
-        hours < 0 ||
-        hours > 23 ||
-        minutes < 0 ||
-        minutes > 59
-    ) {
-
-        return res.status(400).json({
-            success: false,
-            message:
-                "Horário inválido."
-        });
-
-    }
-
-
-    if (
-        /[\u0000-\u001F\u007F]/.test(
-            name
-        )
-    ) {
-
-        return res.status(400).json({
-            success: false,
-            message:
-                "Nome inválido."
-        });
-
-    }
-
-
-    if (name.length < 2) {
-
-        return res.status(400).json({
-            success: false,
-            message:
-                "Nome inválido."
-        });
-
-    }
-
-
-    const phoneDigits =
-        phone.replace(
-            /\D/g,
-            ""
-        );
-
-
-    if (
-        phoneDigits.length < 10 ||
-        phoneDigits.length > 13
-    ) {
-
-        return res.status(400).json({
-            success: false,
-            message:
-                "WhatsApp inválido."
-        });
-
     }
 
 
     try {
 
-        const payload = {
+        /*
+         * O timestamp impede que uma resposta antiga
+         * fique armazenada em cache.
+         */
 
-            action: "book",
-
-            token:
-                backendToken,
-
-            service,
-
-            date,
-
-            time,
-
-            name,
-
-            phone,
-
-            customTime
-
-        };
+        const url =
+            `${backendUrl}` +
+            `?action=availability` +
+            `&date=${encodeURIComponent(date)}` +
+            `&token=${encodeURIComponent(backendToken)}` +
+            `&_=${Date.now()}`;
 
 
         console.log(
-            "Enviando agendamento para Apps Script:",
-            {
-                service,
-                date,
-                time,
-                name,
-                phoneLength:
-                    phoneDigits.length,
-                customTime
-            }
+            "Consultando disponibilidade:",
+            date
         );
 
 
         const response =
-            await fetch(
-                backendUrl,
-                {
-                    method: "POST",
+            await fetch(url, {
 
-                    headers: {
-                        "Content-Type":
-                            "application/json",
+                method: "GET",
 
-                        "Accept":
-                            "application/json"
-                    },
+                headers: {
+                    "Accept": "application/json",
+                    "Cache-Control": "no-cache"
+                },
 
-                    body:
-                        JSON.stringify(
-                            payload
-                        )
-                }
-            );
+                cache: "no-store"
+
+            });
 
 
         const responseText =
@@ -286,7 +85,7 @@ export default async function handler(req, res) {
 
 
         console.log(
-            "Resposta do Google Apps Script:",
+            "Resposta da disponibilidade:",
             response.status,
             responseText
         );
@@ -298,74 +97,77 @@ export default async function handler(req, res) {
         try {
 
             data =
-                JSON.parse(
-                    responseText
-                );
+                JSON.parse(responseText);
 
         } catch (error) {
 
             console.error(
-                "Apps Script não retornou JSON válido:",
+                "Resposta inválida do Apps Script:",
                 responseText
             );
 
             return res.status(502).json({
                 success: false,
                 message:
-                    "O sistema de agendamento retornou uma resposta inválida."
+                    "O sistema de disponibilidade retornou uma resposta inválida."
             });
-
         }
 
 
         if (
             !response.ok ||
-            !data.success
+            data.success === false
         ) {
 
             console.error(
-                "Erro retornado pelo Apps Script:",
+                "Erro na disponibilidade:",
                 data
             );
 
-            return res.status(400).json({
+            return res.status(502).json({
                 success: false,
                 message:
                     data.message ||
-                    "Não foi possível realizar o agendamento."
+                    "Não foi possível consultar os horários."
             });
-
         }
 
 
-        return res.status(200).json({
+        return res.status(200).json(
 
-            success: true,
+            {
+                success: true,
 
-            message:
-                data.message ||
-                "Agendamento registrado com sucesso.",
+                occupied:
+                    Array.isArray(data.occupied)
+                        ? data.occupied
+                        : []
+            },
 
-            whatsappUrl:
-                data.whatsappUrl ||
-                null
+            {
+                "Cache-Control":
+                    "no-store, no-cache, must-revalidate, proxy-revalidate",
 
-        });
+                "Pragma": "no-cache",
+
+                "Expires": "0"
+            }
+
+        );
 
 
     } catch (error) {
 
         console.error(
-            "Erro ao comunicar com Apps Script:",
+            "Erro ao consultar disponibilidade:",
             error
         );
+
 
         return res.status(502).json({
             success: false,
             message:
-                "Erro ao comunicar com o sistema de agendamento."
+                "Não foi possível consultar os horários."
         });
-
     }
-
 }
