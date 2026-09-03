@@ -1,8 +1,4 @@
 export default async function handler(req, res) {
-    // ==========================================
-    // SOMENTE GET
-    // ==========================================
-
     if (req.method !== "GET") {
         return res.status(405).json({
             success: false,
@@ -10,18 +6,10 @@ export default async function handler(req, res) {
         });
     }
 
-    // ==========================================
-    // DATA
-    // ==========================================
-
     const date =
         typeof req.query.date === "string"
             ? req.query.date.trim()
             : "";
-
-    // ==========================================
-    // VALIDAR DATA
-    // ==========================================
 
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
         return res.status(400).json({
@@ -30,19 +18,12 @@ export default async function handler(req, res) {
         });
     }
 
-    // ==========================================
-    // VARIÁVEIS DE AMBIENTE
-    // ==========================================
-
     const backendUrl =
         process.env.APPS_SCRIPT_URL;
 
-    const backendToken =
-        process.env.BACKEND_TOKEN;
-
-    if (!backendUrl || !backendToken) {
+    if (!backendUrl) {
         console.error(
-            "Variáveis de ambiente não configuradas."
+            "APPS_SCRIPT_URL não configurada."
         );
 
         return res.status(500).json({
@@ -51,16 +32,11 @@ export default async function handler(req, res) {
         });
     }
 
-    // ==========================================
-    // CONSULTAR GOOGLE APPS SCRIPT
-    // ==========================================
-
     try {
         const url =
             `${backendUrl}` +
             `?action=availability` +
-            `&date=${encodeURIComponent(date)}` +
-            `&token=${encodeURIComponent(backendToken)}`;
+            `&date=${encodeURIComponent(date)}`;
 
         console.log(
             "Consultando disponibilidade:",
@@ -74,10 +50,6 @@ export default async function handler(req, res) {
             },
             cache: "no-store"
         });
-
-        // ==========================================
-        // LER RESPOSTA
-        // ==========================================
 
         const responseText =
             await response.text();
@@ -105,10 +77,6 @@ export default async function handler(req, res) {
             });
         }
 
-        // ==========================================
-        // VERIFICAR ERRO DO BACKEND
-        // ==========================================
-
         if (!response.ok || data.success === false) {
             console.error(
                 "Erro na disponibilidade:",
@@ -123,19 +91,8 @@ export default async function handler(req, res) {
             });
         }
 
-        // ==========================================
-        // RETORNAR SOMENTE HORÁRIOS OCUPADOS
-        //
-        // NÃO RETORNAR:
-        // - nome
-        // - telefone
-        // - serviço
-        // - outros dados pessoais
-        // ==========================================
-
         return res.status(200).json({
             success: true,
-
             occupied:
                 Array.isArray(data.occupied)
                     ? data.occupied
