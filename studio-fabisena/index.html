@@ -32,18 +32,54 @@
 
 <main class="container">
 
+    <!-- CABEÇALHO -->
+
     <section class="hero">
-        <h1>Studio Fabiana Sena</h1>
+
+        <h1>
+            Studio Fabiana Sena
+        </h1>
 
         <p>
             Agende seu horário de forma rápida e fácil.
         </p>
+
     </section>
 
 
+    <!-- HORÁRIO DE ATENDIMENTO -->
+
     <section class="card">
 
-        <h2>1. Escolha o serviço</h2>
+        <h2>
+            Horário de atendimento
+        </h2>
+
+        <p>
+            Atendimento das
+            <strong>09:00 às 19:00</strong>.
+        </p>
+
+        <p>
+            Pausa para almoço:
+            <strong>12:00 às 13:00</strong>.
+        </p>
+
+        <p>
+            Os horários podem ser escolhidos em blocos ou,
+            se necessário, você pode solicitar outro horário.
+        </p>
+
+    </section>
+
+
+    <!-- SERVIÇO -->
+
+    <section class="card">
+
+        <h2>
+            1. Escolha o serviço
+        </h2>
 
         <label for="service">
             Serviço
@@ -104,9 +140,13 @@
     </section>
 
 
+    <!-- DATA -->
+
     <section class="card">
 
-        <h2>2. Escolha a data</h2>
+        <h2>
+            2. Escolha a data
+        </h2>
 
         <label for="date">
             Data
@@ -117,18 +157,39 @@
             id="date"
         >
 
-        <div id="availability" class="availability">
+        <div
+            id="availability"
+            class="availability"
+        >
             Selecione uma data.
         </div>
 
     </section>
 
 
+    <!-- HORÁRIO -->
+
     <section class="card">
 
-        <h2>3. Escolha o horário</h2>
+        <h2>
+            3. Escolha o horário
+        </h2>
 
-        <div id="times" class="times">
+        <p>
+            Horário de atendimento:
+            <strong>09:00 às 19:00</strong>
+        </p>
+
+        <p>
+            Pausa para almoço:
+            <strong>12:00 às 13:00</strong>
+        </p>
+
+
+        <div
+            id="times"
+            class="times"
+        >
 
             <button
                 type="button"
@@ -138,21 +199,24 @@
                 09:00
             </button>
 
-            <button
-                type="button"
-                class="time"
-                data-time="13:30"
-            >
-                13:30
-            </button>
 
             <button
                 type="button"
                 class="time"
-                data-time="17:00"
+                data-time="13:00"
             >
-                17:00
+                13:00
             </button>
+
+
+            <button
+                type="button"
+                class="time"
+                data-time="16:00"
+            >
+                16:00
+            </button>
+
 
             <button
                 type="button"
@@ -164,6 +228,8 @@
 
         </div>
 
+
+        <!-- OUTRO HORÁRIO -->
 
         <div
             id="customTimeContainer"
@@ -177,20 +243,35 @@
             <input
                 type="time"
                 id="customTime"
+                min="09:00"
+                max="18:59"
             >
 
             <small>
-                Esse horário será analisado e confirmado pela Fabi.
+                Atendimento das 09:00 às 19:00.
+                A pausa para almoço é das 12:00 às 13:00.
             </small>
+
+            <div
+                id="customTimeMessage"
+                class="custom-time-message"
+                role="status"
+                aria-live="polite"
+            ></div>
 
         </div>
 
     </section>
 
 
+    <!-- DADOS -->
+
     <section class="card">
 
-        <h2>4. Seus dados</h2>
+        <h2>
+            4. Seus dados
+        </h2>
+
 
         <label for="name">
             Nome
@@ -228,6 +309,7 @@
 
 
         <!-- Honeypot anti-bot -->
+
         <div
             class="honeypot"
             aria-hidden="true"
@@ -249,12 +331,28 @@
     </section>
 
 
+    <!-- AVISO -->
+
     <section class="warning">
 
-        ⚠️ O agendamento será confirmado somente após a confirmação da Fabi pelo WhatsApp.
+        <strong>
+            ⚠️ Importante
+        </strong>
+
+        <br>
+
+        O agendamento será confirmado somente após
+        a confirmação da Fabi pelo WhatsApp.
+
+        <br><br>
+
+        O horário escolhido fica sujeito à disponibilidade
+        no momento da solicitação.
 
     </section>
 
+
+    <!-- BOTÃO -->
 
     <button
         id="bookButton"
@@ -264,6 +362,8 @@
         Agendar pelo WhatsApp
     </button>
 
+
+    <!-- MENSAGEM -->
 
     <div
         id="message"
@@ -275,7 +375,10 @@
 </main>
 
 
-<script src="/script.js" defer></script>
+<script
+    src="/script.js"
+    defer
+></script>
 
 </body>
 </html>
