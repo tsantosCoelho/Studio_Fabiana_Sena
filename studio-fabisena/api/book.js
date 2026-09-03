@@ -1,25 +1,10 @@
 export default async function handler(req, res) {
 
-    if (req.method !== "GET") {
+    if (req.method !== "POST") {
 
         return res.status(405).json({
             success: false,
             message: "Método não permitido."
-        });
-    }
-
-
-    const date =
-        typeof req.query.date === "string"
-            ? req.query.date.trim()
-            : "";
-
-
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-
-        return res.status(400).json({
-            success: false,
-            message: "Data inválida."
         });
     }
 
@@ -31,7 +16,10 @@ export default async function handler(req, res) {
         process.env.BACKEND_TOKEN;
 
 
-    if (!backendUrl || !backendToken) {
+    if (
+        !backendUrl ||
+        !backendToken
+    ) {
 
         console.error(
             "APPS_SCRIPT_URL ou BACKEND_TOKEN não configurado."
@@ -44,40 +32,271 @@ export default async function handler(req, res) {
     }
 
 
+    let body;
+
+
     try {
 
-        /*
-         * O timestamp impede que uma resposta antiga
-         * fique armazenada em cache.
-         */
+        if (
+            typeof req.body === "object" &&
+            req.body !== null
+        ) {
 
-        const url =
-            `${backendUrl}` +
-            `?action=availability` +
-            `&date=${encodeURIComponent(date)}` +
-            `&token=${encodeURIComponent(backendToken)}` +
-            `&_=${Date.now()}`;
+            body =
+                req.body;
+
+        } else {
+
+            body =
+                JSON.parse(
+                    req.body || "{}"
+                );
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "Erro ao interpretar body:",
+            error
+        );
+
+        return res.status(400).json({
+            success: false,
+            message: "Dados inválidos."
+        });
+    }
+
+
+    const service =
+        typeof body.service === "string"
+            ? body.service
+                .trim()
+                .slice(0, 100)
+            : "";
+
+
+    const date =
+        typeof body.date === "string"
+            ? body.date.trim()
+            : "";
+
+
+    const time =
+        typeof body.time === "string"
+            ? body.time.trim()
+            : "";
+
+
+    const name =
+        typeof body.name === "string"
+            ? body.name
+                .trim()
+                .slice(0, 80)
+            : "";
+
+
+    const phone =
+        typeof body.phone === "string"
+            ? body.phone
+                .trim()
+                .slice(0, 20)
+            : "";
+
+
+    const customTime =
+        body.customTime === true;
+
+
+    /*
+     * CAMPOS OBRIGATÓRIOS
+     */
+
+    if (
+        !service ||
+        !date ||
+        !time ||
+        !name ||
+        !phone
+    ) {
+
+        return res.status(400).json({
+            success: false,
+            message:
+                "Preencha todos os campos."
+        });
+    }
+
+
+    /*
+     * DATA
+     */
+
+    if (
+        !/^\d{4}-\d{2}-\d{2}$/.test(date)
+    ) {
+
+        return res.status(400).json({
+            success: false,
+            message:
+                "Data inválida."
+        });
+    }
+
+
+    /*
+     * HORÁRIO
+     */
+
+    if (
+        !/^\d{2}:\d{2}$/.test(time)
+    ) {
+
+        return res.status(400).json({
+            success: false,
+            message:
+                "Horário inválido."
+        });
+    }
+
+
+    const [
+        hours,
+        minutes
+    ] =
+        time
+            .split(":")
+            .map(Number);
+
+
+    if (
+        hours < 0 ||
+        hours > 23 ||
+        minutes < 0 ||
+        minutes > 59
+    ) {
+
+        return res.status(400).json({
+            success: false,
+            message:
+                "Horário inválido."
+        });
+    }
+
+
+    /*
+     * NOME
+     */
+
+    if (
+        /[\u0000-\u001F\u007F]/.test(
+            name
+        )
+    ) {
+
+        return res.status(400).json({
+            success: false,
+            message:
+                "Nome inválido."
+        });
+    }
+
+
+    if (
+        name.length < 2
+    ) {
+
+        return res.status(400).json({
+            success: false,
+            message:
+                "Nome inválido."
+        });
+    }
+
+
+    /*
+     * WHATSAPP
+     */
+
+    const phoneDigits =
+        phone.replace(
+            /\D/g,
+            ""
+        );
+
+
+    if (
+        phoneDigits.length < 10 ||
+        phoneDigits.length > 13
+    ) {
+
+        return res.status(400).json({
+            success: false,
+            message:
+                "WhatsApp inválido."
+        });
+    }
+
+
+    try {
+
+        const payload = {
+
+            action:
+                "book",
+
+            token:
+                backendToken,
+
+            service,
+
+            date,
+
+            time,
+
+            name,
+
+            phone,
+
+            customTime
+
+        };
 
 
         console.log(
-            "Consultando disponibilidade:",
-            date
+            "Enviando agendamento para Apps Script:",
+            {
+                service,
+                date,
+                time,
+                name,
+                phoneLength:
+                    phoneDigits.length,
+                customTime
+            }
         );
 
 
         const response =
-            await fetch(url, {
+            await fetch(
+                backendUrl,
+                {
+                    method: "POST",
 
-                method: "GET",
+                    headers: {
+                        "Content-Type":
+                            "application/json",
 
-                headers: {
-                    "Accept": "application/json",
-                    "Cache-Control": "no-cache"
-                },
+                        "Accept":
+                            "application/json"
+                    },
 
-                cache: "no-store"
-
-            });
+                    body:
+                        JSON.stringify(
+                            payload
+                        )
+                }
+            );
 
 
         const responseText =
@@ -85,7 +304,7 @@ export default async function handler(req, res) {
 
 
         console.log(
-            "Resposta da disponibilidade:",
+            "Resposta do Google Apps Script:",
             response.status,
             responseText
         );
@@ -97,69 +316,67 @@ export default async function handler(req, res) {
         try {
 
             data =
-                JSON.parse(responseText);
+                JSON.parse(
+                    responseText
+                );
 
         } catch (error) {
 
             console.error(
-                "Resposta inválida do Apps Script:",
+                "Apps Script não retornou JSON válido:",
                 responseText
             );
 
             return res.status(502).json({
                 success: false,
                 message:
-                    "O sistema de disponibilidade retornou uma resposta inválida."
+                    "O sistema de agendamento retornou uma resposta inválida."
             });
         }
 
 
         if (
             !response.ok ||
-            data.success === false
+            !data.success
         ) {
 
             console.error(
-                "Erro na disponibilidade:",
+                "Erro retornado pelo Apps Script:",
                 data
             );
 
-            return res.status(502).json({
+            return res.status(400).json({
                 success: false,
                 message:
                     data.message ||
-                    "Não foi possível consultar os horários."
+                    "Não foi possível realizar o agendamento."
             });
         }
 
 
-        return res.status(200).json(
+        /*
+         * SUCESSO
+         */
 
-            {
-                success: true,
+        return res.status(200).json({
 
-                occupied:
-                    Array.isArray(data.occupied)
-                        ? data.occupied
-                        : []
-            },
+            success: true,
 
-            {
-                "Cache-Control":
-                    "no-store, no-cache, must-revalidate, proxy-revalidate",
+            message:
+                data.message ||
+                "Agendamento realizado com sucesso.",
 
-                "Pragma": "no-cache",
+            whatsappUrl:
+                data.whatsappUrl ||
+                null
 
-                "Expires": "0"
-            }
-
-        );
+        });
 
 
     } catch (error) {
 
         console.error(
-            "Erro ao consultar disponibilidade:",
+            "Erro ao comunicar com Apps Script:",
             error
         );
 
@@ -167,7 +384,7 @@ export default async function handler(req, res) {
         return res.status(502).json({
             success: false,
             message:
-                "Não foi possível consultar os horários."
+                "Erro ao comunicar com o sistema de agendamento."
         });
     }
 }
