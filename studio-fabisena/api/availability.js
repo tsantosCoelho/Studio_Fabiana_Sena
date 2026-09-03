@@ -1,4 +1,5 @@
 export default async function handler(req, res) {
+
     if (req.method !== "GET") {
         return res.status(405).json({
             success: false,
@@ -25,6 +26,7 @@ export default async function handler(req, res) {
         process.env.BACKEND_TOKEN;
 
     if (!backendUrl || !backendToken) {
+
         console.error(
             "APPS_SCRIPT_URL ou BACKEND_TOKEN não configurado."
         );
@@ -36,30 +38,55 @@ export default async function handler(req, res) {
     }
 
     try {
+
+        /*
+         * Timestamp evita que qualquer camada
+         * intermediária reutilize uma resposta antiga.
+         */
+        const cacheBuster =
+            Date.now().toString();
+
+        const separator =
+            backendUrl.includes("?")
+                ? "&"
+                : "?";
+
         const url =
             `${backendUrl}` +
-            `?action=availability` +
+            `${separator}action=availability` +
             `&date=${encodeURIComponent(date)}` +
-            `&token=${encodeURIComponent(backendToken)}`;
+            `&token=${encodeURIComponent(backendToken)}` +
+            `&_=${cacheBuster}`;
 
         console.log(
             "Consultando disponibilidade:",
             date
         );
 
-        const response = await fetch(url, {
-            method: "GET",
-            headers: {
-                "Accept": "application/json"
-            },
-            cache: "no-store"
-        });
+        const response =
+            await fetch(url, {
+                method: "GET",
+
+                headers: {
+                    "Accept":
+                        "application/json",
+
+                    "Cache-Control":
+                        "no-cache, no-store, must-revalidate",
+
+                    "Pragma":
+                        "no-cache"
+                },
+
+                cache:
+                    "no-store"
+            });
 
         const responseText =
             await response.text();
 
         console.log(
-            "Resposta da disponibilidade:",
+            "Resposta do Apps Script:",
             response.status,
             responseText
         );
@@ -67,10 +94,16 @@ export default async function handler(req, res) {
         let data;
 
         try {
-            data = JSON.parse(responseText);
+
+            data =
+                JSON.parse(
+                    responseText
+                );
+
         } catch (error) {
+
             console.error(
-                "Resposta inválida do Apps Script:",
+                "Apps Script retornou algo que não é JSON:",
                 responseText
             );
 
@@ -81,9 +114,13 @@ export default async function handler(req, res) {
             });
         }
 
-        if (!response.ok || data.success === false) {
+        if (
+            !response.ok ||
+            data.success === false
+        ) {
+
             console.error(
-                "Erro na disponibilidade:",
+                "Erro retornado pelo Apps Script:",
                 data
             );
 
@@ -95,15 +132,50 @@ export default async function handler(req, res) {
             });
         }
 
+        const occupied =
+            Array.isArray(data.occupied)
+                ? data.occupied
+                    .map(time =>
+                        String(time).trim()
+                    )
+                    .filter(Boolean)
+                : [];
+
+        /*
+         * Evita horários duplicados.
+         */
+        const uniqueOccupied =
+            [...new Set(occupied)];
+
+        /*
+         * Impede cache da resposta da Vercel.
+         */
+        res.setHeader(
+            "Cache-Control",
+            "no-store, no-cache, must-revalidate, proxy-revalidate"
+        );
+
+        res.setHeader(
+            "Pragma",
+            "no-cache"
+        );
+
+        res.setHeader(
+            "Expires",
+            "0"
+        );
+
         return res.status(200).json({
+
             success: true,
+
             occupied:
-                Array.isArray(data.occupied)
-                    ? data.occupied
-                    : []
+                uniqueOccupied
+
         });
 
     } catch (error) {
+
         console.error(
             "Erro ao consultar disponibilidade:",
             error
