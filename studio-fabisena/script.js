@@ -1,11 +1,9 @@
 "use strict";
 
 
-/*
- * ==========================================
- * CONFIGURAÇÕES
- * ==========================================
- */
+/* ==========================================
+   CONFIGURAÇÕES
+   ========================================== */
 
 const API_AVAILABILITY =
     "/api/availability";
@@ -41,73 +39,91 @@ const CUSTOMER_STORAGE_KEY =
     "studio_fabiana_sena_cliente";
 
 
-/*
- * ==========================================
- * ELEMENTOS
- * ==========================================
- */
+/* ==========================================
+   ELEMENTOS
+   ========================================== */
 
 const serviceElement =
-    document.getElementById("service");
+    document.getElementById(
+        "service"
+    );
 
 
 const dateElement =
-    document.getElementById("date");
+    document.getElementById(
+        "date"
+    );
 
 
 const availabilityElement =
-    document.getElementById("availability");
-
-
-const timesContainer =
-    document.getElementById("times");
+    document.getElementById(
+        "availability"
+    );
 
 
 const timeButtons =
-    document.querySelectorAll(".time");
+    document.querySelectorAll(
+        ".time"
+    );
 
 
 const customTimeContainer =
-    document.getElementById("customTimeContainer");
+    document.getElementById(
+        "customTimeContainer"
+    );
 
 
 const customTimeElement =
-    document.getElementById("customTime");
+    document.getElementById(
+        "customTime"
+    );
 
 
 const customTimeMessage =
-    document.getElementById("customTimeMessage");
+    document.getElementById(
+        "customTimeMessage"
+    );
 
 
 const nameElement =
-    document.getElementById("name");
+    document.getElementById(
+        "name"
+    );
 
 
 const phoneElement =
-    document.getElementById("phone");
+    document.getElementById(
+        "phone"
+    );
 
 
 const clearCustomerDataButton =
-    document.getElementById("clearCustomerData");
+    document.getElementById(
+        "clearCustomerData"
+    );
 
 
 const bookButton =
-    document.getElementById("bookButton");
+    document.getElementById(
+        "bookButton"
+    );
 
 
 const messageElement =
-    document.getElementById("message");
+    document.getElementById(
+        "message"
+    );
 
 
 const honeypotElement =
-    document.getElementById("website");
+    document.getElementById(
+        "website"
+    );
 
 
-/*
- * ==========================================
- * ESTADO
- * ==========================================
- */
+/* ==========================================
+   ESTADO
+   ========================================== */
 
 let occupiedTimes = [];
 
@@ -118,11 +134,9 @@ let selectedDate = "";
 let availabilityLoading = false;
 
 
-/*
- * ==========================================
- * INICIALIZAÇÃO
- * ==========================================
- */
+/* ==========================================
+   INICIALIZAÇÃO
+   ========================================== */
 
 document.addEventListener(
     "DOMContentLoaded",
@@ -140,11 +154,9 @@ document.addEventListener(
 );
 
 
-/*
- * ==========================================
- * EVENTOS
- * ==========================================
- */
+/* ==========================================
+   EVENTOS
+   ========================================== */
 
 function setupEvents() {
 
@@ -155,9 +167,11 @@ function setupEvents() {
             selectedDate =
                 dateElement.value;
 
-            selectedTime = "";
+            selectedTime =
+                "";
 
-            customTimeElement.value = "";
+            customTimeElement.value =
+                "";
 
             hideCustomTime();
 
@@ -167,13 +181,17 @@ function setupEvents() {
 
             resetTimes();
 
-            if (!selectedDate) {
+
+            if (
+                !selectedDate
+            ) {
 
                 availabilityElement.textContent =
                     "Selecione uma data.";
 
                 return;
             }
+
 
             await loadAvailability(
                 selectedDate
@@ -256,8 +274,8 @@ function setupEvents() {
 
 
     /*
-     * Atualiza a disponibilidade quando
-     * o usuário volta para a página.
+     * Atualiza quando volta
+     * para a página.
      */
 
     document.addEventListener(
@@ -266,7 +284,7 @@ function setupEvents() {
 
             if (
                 document.visibilityState ===
-                "visible" &&
+                    "visible" &&
                 dateElement.value
             ) {
 
@@ -281,8 +299,7 @@ function setupEvents() {
 
 
     /*
-     * Atualiza a disponibilidade
-     * a cada 60 segundos.
+     * Atualiza a cada 60 segundos.
      */
 
     setInterval(
@@ -306,16 +323,15 @@ function setupEvents() {
 }
 
 
-/*
- * ==========================================
- * DATA MÍNIMA
- * ==========================================
- */
+/* ==========================================
+   DATA MÍNIMA
+   ========================================== */
 
 function setMinimumDate() {
 
     const today =
         getTodayLocal();
+
 
     dateElement.min =
         today;
@@ -323,29 +339,37 @@ function setMinimumDate() {
 }
 
 
-/*
- * ==========================================
- * DATA LOCAL
- * ==========================================
- */
+/* ==========================================
+   DATA LOCAL
+   ========================================== */
 
 function getTodayLocal() {
 
     const now =
         new Date();
 
+
     const year =
         now.getFullYear();
+
 
     const month =
         String(
             now.getMonth() + 1
-        ).padStart(2, "0");
+        ).padStart(
+            2,
+            "0"
+        );
+
 
     const day =
         String(
             now.getDate()
-        ).padStart(2, "0");
+        ).padStart(
+            2,
+            "0"
+        );
+
 
     return (
         year +
@@ -354,19 +378,20 @@ function getTodayLocal() {
         "-" +
         day
     );
-
 }
 
 
-/*
- * ==========================================
- * CARREGAR DISPONIBILIDADE
- * ==========================================
- */
+/* ==========================================
+   DISPONIBILIDADE
+   ========================================== */
 
-async function loadAvailability(date) {
+async function loadAvailability(
+    date
+) {
 
-    availabilityLoading = true;
+    availabilityLoading =
+        true;
+
 
     availabilityElement.textContent =
         "Consultando disponibilidade...";
@@ -374,14 +399,12 @@ async function loadAvailability(date) {
 
     try {
 
-        /*
-         * O timestamp evita cache.
-         */
-
         const url =
             API_AVAILABILITY +
             "?date=" +
-            encodeURIComponent(date) +
+            encodeURIComponent(
+                date
+            ) +
             "&_=" +
             Date.now();
 
@@ -400,7 +423,8 @@ async function loadAvailability(date) {
                             "no-cache"
                     },
 
-                    cache: "no-store"
+                    cache:
+                        "no-store"
                 }
             );
 
@@ -418,16 +442,17 @@ async function loadAvailability(date) {
                 data.message ||
                 "Não foi possível consultar os horários."
             );
-
         }
 
 
         /*
-         * Normaliza e remove duplicados.
+         * Normaliza os horários.
          */
 
         occupiedTimes =
-            Array.isArray(data.occupied)
+            Array.isArray(
+                data.occupied
+            )
                 ? [
                     ...new Set(
                         data.occupied
@@ -441,9 +466,8 @@ async function loadAvailability(date) {
 
 
         /*
-         * Se o usuário estava com
-         * um horário selecionado,
-         * verifica se ainda está livre.
+         * Se o horário selecionado
+         * ficou ocupado, remove.
          */
 
         if (
@@ -453,32 +477,31 @@ async function loadAvailability(date) {
             )
         ) {
 
-            selectedTime = "";
+            selectedTime =
+                "";
 
-            customTimeElement.value = "";
+            customTimeElement.value =
+                "";
 
             hideCustomTime();
+
 
             showMessage(
                 "Esse horário acabou de ser ocupado. Escolha outro horário.",
                 "error"
             );
-
         }
 
 
         renderTimes();
 
 
-        /*
-         * Quantidade de horários fixos
-         * disponíveis.
-         */
-
         const fixedAvailable =
             FIXED_TIMES.filter(
                 time =>
-                    !isTimeOccupied(time) &&
+                    !isTimeOccupied(
+                        time
+                    ) &&
                     !isPastDateTime(
                         date,
                         time
@@ -502,8 +525,8 @@ async function loadAvailability(date) {
 
 
         /*
-         * Se "Outro horário" estava
-         * selecionado, verifica novamente.
+         * Verifica novamente
+         * outro horário.
          */
 
         if (
@@ -526,7 +549,8 @@ async function loadAvailability(date) {
         );
 
 
-        occupiedTimes = [];
+        occupiedTimes =
+            [];
 
 
         availabilityElement.textContent =
@@ -537,18 +561,16 @@ async function loadAvailability(date) {
 
     } finally {
 
-        availabilityLoading = false;
+        availabilityLoading =
+            false;
 
     }
-
 }
 
 
-/*
- * ==========================================
- * RENDERIZAR HORÁRIOS
- * ==========================================
- */
+/* ==========================================
+   RENDERIZAR HORÁRIOS
+   ========================================== */
 
 function renderTimes() {
 
@@ -570,12 +592,23 @@ function renderTimes() {
                 button.disabled =
                     false;
 
+
                 button.classList.remove(
                     "occupied"
                 );
 
-                return;
 
+                button.classList.toggle(
+                    "selected",
+                    selectedTime === ""
+                        ? false
+                        : !FIXED_TIMES.includes(
+                            selectedTime
+                        )
+                );
+
+
+                return;
             }
 
 
@@ -611,17 +644,17 @@ function renderTimes() {
             );
 
 
-            /*
-             * Texto visual
-             */
-
-            if (occupied) {
+            if (
+                occupied
+            ) {
 
                 button.textContent =
                     time +
                     " - Ocupado";
 
-            } else if (past) {
+            } else if (
+                past
+            ) {
 
                 button.textContent =
                     time +
@@ -631,22 +664,20 @@ function renderTimes() {
 
                 button.textContent =
                     time;
-
             }
 
         }
     );
-
 }
 
 
-/*
- * ==========================================
- * SELECIONAR HORÁRIO
- * ==========================================
- */
+/* ==========================================
+   SELECIONAR HORÁRIO
+   ========================================== */
 
-function handleTimeSelection(button) {
+function handleTimeSelection(
+    button
+) {
 
     if (
         button.disabled
@@ -673,16 +704,20 @@ function handleTimeSelection(button) {
         time === "OUTRO"
     ) {
 
-        selectedTime = "";
+        selectedTime =
+            "";
+
 
         showCustomTime();
 
+
         renderTimes();
+
 
         customTimeElement.focus();
 
-        return;
 
+        return;
     }
 
 
@@ -691,7 +726,9 @@ function handleTimeSelection(button) {
      */
 
     if (
-        isTimeOccupied(time)
+        isTimeOccupied(
+            time
+        )
     ) {
 
         showMessage(
@@ -700,7 +737,6 @@ function handleTimeSelection(button) {
         );
 
         return;
-
     }
 
 
@@ -714,7 +750,6 @@ function handleTimeSelection(button) {
         );
 
         return;
-
     }
 
 
@@ -731,7 +766,6 @@ function handleTimeSelection(button) {
         );
 
         return;
-
     }
 
 
@@ -741,25 +775,24 @@ function handleTimeSelection(button) {
 
     hideCustomTime();
 
-    customTimeElement.value = "";
+
+    customTimeElement.value =
+        "";
+
 
     renderTimes();
-
 }
 
 
-/*
- * ==========================================
- * OUTRO HORÁRIO
- * ==========================================
- */
+/* ==========================================
+   OUTRO HORÁRIO
+   ========================================== */
 
 function showCustomTime() {
 
     customTimeContainer.classList.remove(
         "hidden"
     );
-
 }
 
 
@@ -768,15 +801,12 @@ function hideCustomTime() {
     customTimeContainer.classList.add(
         "hidden"
     );
-
 }
 
 
-/*
- * ==========================================
- * VERIFICAR OUTRO HORÁRIO
- * ==========================================
- */
+/* ==========================================
+   VERIFICAR OUTRO HORÁRIO
+   ========================================== */
 
 function checkCustomTime() {
 
@@ -791,43 +821,17 @@ function checkCustomTime() {
 
     if (!time) {
 
-        selectedTime = "";
+        selectedTime =
+            "";
 
         clearCustomTimeMessage();
 
         return false;
-
     }
 
 
     /*
-     * Verifica formato.
-     */
-
-    if (
-        !/^\d{2}:\d{2}$/.test(time)
-    ) {
-
-        selectedTime = "";
-
-        showCustomTimeMessage(
-            "Informe um horário válido.",
-            "error"
-        );
-
-        return false;
-
-    }
-
-
-    /*
-     * Horário de funcionamento:
-     *
-     * 09:00 até 19:00.
-     *
-     * 19:00 é o encerramento,
-     * portanto não pode ser início
-     * de atendimento.
+     * HORÁRIO DE FUNCIONAMENTO
      */
 
     if (
@@ -835,20 +839,22 @@ function checkCustomTime() {
         time >= CLOSE_TIME
     ) {
 
-        selectedTime = "";
+        selectedTime =
+            "";
+
 
         showCustomTimeMessage(
             "O horário de atendimento é das 09:00 às 19:00. Escolha um horário dentro desse período.",
             "error"
         );
 
-        return false;
 
+        return false;
     }
 
 
     /*
-     * Pausa para almoço.
+     * ALMOÇO
      */
 
     if (
@@ -856,43 +862,49 @@ function checkCustomTime() {
         time < LUNCH_END
     ) {
 
-        selectedTime = "";
+        selectedTime =
+            "";
+
 
         showCustomTimeMessage(
             "Entre 12:00 e 13:00 é o horário de almoço. Escolha outro horário.",
             "error"
         );
 
-        return false;
 
+        return false;
     }
 
 
     /*
-     * Verifica se já está ocupado.
+     * HORÁRIO OCUPADO
      *
-     * ESSA É A PARTE PRINCIPAL
-     * DA CORREÇÃO.
+     * Essa é a principal proteção
+     * para "Outro horário".
      */
 
     if (
-        isTimeOccupied(time)
+        isTimeOccupied(
+            time
+        )
     ) {
 
-        selectedTime = "";
+        selectedTime =
+            "";
+
 
         showCustomTimeMessage(
             "⚠️ Esse horário já está agendado. Escolha outro horário.",
             "error"
         );
 
-        return false;
 
+        return false;
     }
 
 
     /*
-     * Verifica se o horário já passou.
+     * HORÁRIO PASSADO
      */
 
     if (
@@ -903,20 +915,22 @@ function checkCustomTime() {
         )
     ) {
 
-        selectedTime = "";
+        selectedTime =
+            "";
+
 
         showCustomTimeMessage(
             "Esse horário já passou. Escolha outro horário.",
             "error"
         );
 
-        return false;
 
+        return false;
     }
 
 
     /*
-     * Tudo certo.
+     * TUDO CERTO
      */
 
     selectedTime =
@@ -930,43 +944,42 @@ function checkCustomTime() {
 
 
     return true;
-
 }
 
 
-/*
- * ==========================================
- * VERIFICAR HORÁRIO OCUPADO
- * ==========================================
- */
+/* ==========================================
+   VERIFICAR OCUPAÇÃO
+   ========================================== */
 
-function isTimeOccupied(time) {
+function isTimeOccupied(
+    time
+) {
 
     const normalized =
-        normalizeTime(time);
+        normalizeTime(
+            time
+        );
 
 
     if (!normalized) {
 
         return false;
-
     }
 
 
     return occupiedTimes.includes(
         normalized
     );
-
 }
 
 
-/*
- * ==========================================
- * NORMALIZAR HORÁRIO
- * ==========================================
- */
+/* ==========================================
+   NORMALIZAR HORÁRIO
+   ========================================== */
 
-function normalizeTime(value) {
+function normalizeTime(
+    value
+) {
 
     if (
         value === null ||
@@ -974,7 +987,6 @@ function normalizeTime(value) {
     ) {
 
         return "";
-
     }
 
 
@@ -983,59 +995,60 @@ function normalizeTime(value) {
             .trim();
 
 
-    /*
-     * HH:mm
-     */
-
-    let match =
+    const match =
         text.match(
             /^(\d{1,2}):(\d{2})$/
         );
 
 
-    if (match) {
+    if (!match) {
 
-        const hours =
-            Number(
-                match[1]
-            );
-
-        const minutes =
-            Number(
-                match[2]
-            );
-
-
-        if (
-            hours >= 0 &&
-            hours <= 23 &&
-            minutes >= 0 &&
-            minutes <= 59
-        ) {
-
-            return (
-                String(hours)
-                    .padStart(2, "0") +
-                ":" +
-                String(minutes)
-                    .padStart(2, "0")
-            );
-
-        }
-
+        return "";
     }
 
 
-    return "";
+    const hours =
+        Number(
+            match[1]
+        );
 
+
+    const minutes =
+        Number(
+            match[2]
+        );
+
+
+    if (
+        hours < 0 ||
+        hours > 23 ||
+        minutes < 0 ||
+        minutes > 59
+    ) {
+
+        return "";
+    }
+
+
+    return (
+        String(hours)
+            .padStart(
+                2,
+                "0"
+            ) +
+        ":" +
+        String(minutes)
+            .padStart(
+                2,
+                "0"
+            )
+    );
 }
 
 
-/*
- * ==========================================
- * HORÁRIO PASSADO
- * ==========================================
- */
+/* ==========================================
+   HORÁRIO PASSADO
+   ========================================== */
 
 function isPastDateTime(
     date,
@@ -1051,7 +1064,6 @@ function isPastDateTime(
     ) {
 
         return true;
-
     }
 
 
@@ -1060,18 +1072,18 @@ function isPastDateTime(
     ) {
 
         return false;
-
     }
 
 
     const normalized =
-        normalizeTime(time);
+        normalizeTime(
+            time
+        );
 
 
     if (!normalized) {
 
         return false;
-
     }
 
 
@@ -1117,32 +1129,30 @@ function isPastDateTime(
         selectedTotal <=
         currentTotal
     );
-
 }
 
 
-/*
- * ==========================================
- * RESETAR HORÁRIOS
- * ==========================================
- */
+/* ==========================================
+   RESETAR HORÁRIOS
+   ========================================== */
 
 function resetTimes() {
 
-    occupiedTimes = [];
+    occupiedTimes =
+        [];
 
-    selectedTime = "";
+
+    selectedTime =
+        "";
+
 
     renderTimes();
-
 }
 
 
-/*
- * ==========================================
- * CRIAR AGENDAMENTO
- * ==========================================
- */
+/* ==========================================
+   CRIAR AGENDAMENTO
+   ========================================== */
 
 async function createBooking() {
 
@@ -1150,7 +1160,7 @@ async function createBooking() {
 
 
     /*
-     * Honeypot
+     * HONEYPOT
      */
 
     if (
@@ -1159,7 +1169,6 @@ async function createBooking() {
     ) {
 
         return;
-
     }
 
 
@@ -1190,10 +1199,11 @@ async function createBooking() {
             "error"
         );
 
+
         serviceElement.focus();
 
-        return;
 
+        return;
     }
 
 
@@ -1208,10 +1218,11 @@ async function createBooking() {
             "error"
         );
 
+
         dateElement.focus();
 
-        return;
 
+        return;
     }
 
 
@@ -1228,10 +1239,11 @@ async function createBooking() {
             "error"
         );
 
+
         dateElement.focus();
 
-        return;
 
+        return;
     }
 
 
@@ -1239,23 +1251,20 @@ async function createBooking() {
      * HORÁRIO
      */
 
-    if (
-        !selectedTime
-    ) {
+    if (!selectedTime) {
 
         showMessage(
             "Escolha um horário.",
             "error"
         );
 
-        return;
 
+        return;
     }
 
 
     /*
-     * Se for horário personalizado,
-     * verifica novamente.
+     * VERIFICA SE É PERSONALIZADO
      */
 
     const isCustomTime =
@@ -1268,6 +1277,10 @@ async function createBooking() {
         isCustomTime
     ) {
 
+        customTimeElement.value =
+            selectedTime;
+
+
         const valid =
             checkCustomTime();
 
@@ -1277,15 +1290,12 @@ async function createBooking() {
             customTimeElement.focus();
 
             return;
-
         }
-
     }
 
 
     /*
-     * Verificação final contra
-     * a disponibilidade carregada.
+     * VERIFICAÇÃO FINAL
      */
 
     if (
@@ -1306,7 +1316,6 @@ async function createBooking() {
 
 
         return;
-
     }
 
 
@@ -1326,12 +1335,13 @@ async function createBooking() {
             "error"
         );
 
+
         await loadAvailability(
             date
         );
 
-        return;
 
+        return;
     }
 
 
@@ -1348,15 +1358,16 @@ async function createBooking() {
             "error"
         );
 
+
         nameElement.focus();
 
-        return;
 
+        return;
     }
 
 
     /*
-     * WhatsApp
+     * WHATSAPP
      */
 
     const phoneDigits =
@@ -1376,10 +1387,11 @@ async function createBooking() {
             "error"
         );
 
+
         phoneElement.focus();
 
-        return;
 
+        return;
     }
 
 
@@ -1389,6 +1401,7 @@ async function createBooking() {
 
     bookButton.disabled =
         true;
+
 
     bookButton.textContent =
         "Enviando...";
@@ -1419,7 +1432,8 @@ async function createBooking() {
             await fetch(
                 API_BOOK,
                 {
-                    method: "POST",
+                    method:
+                        "POST",
 
                     headers: {
                         "Content-Type":
@@ -1461,19 +1475,12 @@ async function createBooking() {
             );
 
 
-            /*
-             * Atualiza disponibilidade
-             * caso tenha sido ocupado
-             * por outra pessoa.
-             */
-
             await loadAvailability(
                 date
             );
 
 
             return;
-
         }
 
 
@@ -1489,8 +1496,8 @@ async function createBooking() {
 
 
         /*
-         * Adiciona o horário localmente
-         * como ocupado imediatamente.
+         * Marca localmente
+         * como ocupado.
          */
 
         if (
@@ -1503,7 +1510,6 @@ async function createBooking() {
             occupiedTimes.push(
                 selectedTime
             );
-
         }
 
 
@@ -1520,7 +1526,6 @@ async function createBooking() {
 
             window.location.href =
                 data.whatsappUrl;
-
         }
 
 
@@ -1543,19 +1548,17 @@ async function createBooking() {
         bookButton.disabled =
             false;
 
+
         bookButton.textContent =
             "Agendar pelo WhatsApp";
 
     }
-
 }
 
 
-/*
- * ==========================================
- * MENSAGENS
- * ==========================================
- */
+/* ==========================================
+   MENSAGENS
+   ========================================== */
 
 function showMessage(
     text,
@@ -1569,7 +1572,6 @@ function showMessage(
     messageElement.className =
         "message " +
         type;
-
 }
 
 
@@ -1578,9 +1580,9 @@ function clearMessage() {
     messageElement.textContent =
         "";
 
+
     messageElement.className =
         "message";
-
 }
 
 
@@ -1596,7 +1598,6 @@ function showCustomTimeMessage(
     customTimeMessage.className =
         "custom-time-message " +
         type;
-
 }
 
 
@@ -1605,17 +1606,15 @@ function clearCustomTimeMessage() {
     customTimeMessage.textContent =
         "";
 
+
     customTimeMessage.className =
         "custom-time-message";
-
 }
 
 
-/*
- * ==========================================
- * LOCALSTORAGE
- * ==========================================
- */
+/* ==========================================
+   LOCAL STORAGE
+   ========================================== */
 
 function saveCustomerData() {
 
@@ -1637,15 +1636,14 @@ function saveCustomerData() {
             JSON.stringify(data)
         );
 
+
     } catch (error) {
 
         console.error(
             "Não foi possível salvar os dados:",
             error
         );
-
     }
-
 }
 
 
@@ -1662,12 +1660,13 @@ function loadCustomerData() {
         if (!saved) {
 
             return;
-
         }
 
 
         const data =
-            JSON.parse(saved);
+            JSON.parse(
+                saved
+            );
 
 
         if (
@@ -1678,7 +1677,6 @@ function loadCustomerData() {
 
             nameElement.value =
                 data.name;
-
         }
 
 
@@ -1690,7 +1688,6 @@ function loadCustomerData() {
 
             phoneElement.value =
                 data.phone;
-
         }
 
 
@@ -1700,22 +1697,19 @@ function loadCustomerData() {
             "Não foi possível carregar os dados:",
             error
         );
-
     }
-
 }
 
 
-/*
- * ==========================================
- * LIMPAR DADOS
- * ==========================================
- */
+/* ==========================================
+   LIMPAR DADOS
+   ========================================== */
 
 function clearCustomerData() {
 
     nameElement.value =
         "";
+
 
     phoneElement.value =
         "";
@@ -1727,13 +1721,13 @@ function clearCustomerData() {
             CUSTOMER_STORAGE_KEY
         );
 
+
     } catch (error) {
 
         console.error(
             "Não foi possível limpar os dados:",
             error
         );
-
     }
 
 
@@ -1741,5 +1735,4 @@ function clearCustomerData() {
         "Seus dados foram apagados.",
         "success"
     );
-
 }
