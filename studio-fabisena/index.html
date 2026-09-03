@@ -1,213 +1,269 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
 
-  <title>Fabiana Sena</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-  <link rel="stylesheet" href="style.css" />
+    <meta
+        name="description"
+        content="Agendamento online - Studio Fabiana Sena"
+    >
 
-  <!-- GOOGLE FONTS -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-    rel="stylesheet">
+    <meta
+        name="robots"
+        content="index, follow"
+    >
 
-  <!-- ICONES -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <meta
+        http-equiv="X-Content-Type-Options"
+        content="nosniff"
+    >
 
-  <!-- AOS -->
-  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+    <title>Studio Fabiana Sena - Agendamentos</title>
+
+    <link rel="stylesheet" href="/style.css">
 </head>
 
 <body>
 
-  <!-- MENU -->
+<main class="container">
 
-  <nav class="navbar">
+    <section class="hero">
+        <h1>Studio Fabiana Sena</h1>
 
-    <div class="logo">
-      Fabiana Sena
-    </div>
+        <p>
+            Agende seu horário de forma rápida e fácil.
+        </p>
+    </section>
 
-    <div class="menu">
-      <a href="#inicio">Início</a>
-      <a href="#servicos">Serviços</a>
-      <a href="#contato">Contato</a>
-    </div>
 
-  </nav>
+    <section class="card">
 
-  <!-- HERO -->
+        <h2>1. Escolha o serviço</h2>
 
-  <section class="hero" id="inicio">
+        <label for="service">
+            Serviço
+        </label>
 
-    <div class="overlay"></div>
+        <select id="service">
+            <option value="">
+                Selecione um serviço
+            </option>
 
-    <div class="hero-content" data-aos="fade-up">
+            <option value="Alongamento em gel - Primeira colocação">
+                Alongamento em gel - Primeira colocação — R$ 130
+            </option>
 
-      <h1>
-        Fabiana Sena
-      </h1>
+            <option value="Alongamento em gel - Manutenção">
+                Alongamento em gel - Manutenção — R$ 90
+            </option>
 
-      <p>
-        Especialista em Cílios Tufos de Luxo | 💅🏽Alongamento Molde F1, Banho de Gel, Blindagem.
-      </p>
+            <option value="Banho em gel - Primeira colocação">
+                Banho em gel - Primeira colocação — R$ 100
+            </option>
 
-      <div class="buttons">
+            <option value="Banho em gel - Manutenção">
+                Banho em gel - Manutenção — R$ 85
+            </option>
 
-        <a href="https://wa.me/5511968515895" target="_blank" class="btn whatsapp">
-          <i class="fa-brands fa-whatsapp"></i>
-          Agendar
-        </a>
+            <option value="Blindagem">
+                Blindagem — R$ 70
+            </option>
 
-        <a href="https://instagram.com/studio_fabisena" target="_blank" class="btn instagram">
-          <i class="fa-brands fa-instagram"></i>
-          Instagram
-        </a>
+            <option value="Manicure tradicional - Mão">
+                Manicure tradicional - Mão — R$ 30
+            </option>
 
-      </div>
+            <option value="Manicure tradicional - Pé">
+                Manicure tradicional - Pé — R$ 30
+            </option>
 
-    </div>
+            <option value="Manicure tradicional - Mão e pé">
+                Manicure tradicional - Mão e pé — R$ 60
+            </option>
 
-  </section>
+            <option value="Esmaltação em gel - Mão">
+                Esmaltação em gel - Mão — R$ 60
+            </option>
 
-  <!-- SERVIÇOS UNHAS -->
+            <option value="Esmaltação em gel - Pé">
+                Esmaltação em gel - Pé — R$ 70
+            </option>
 
-  <section class="services nails-bg" id="servicos">
+            <option value="Esmaltação em gel - Mão e pé">
+                Esmaltação em gel - Mão e pé — R$ 130
+            </option>
 
-    <div class="overlay-section"></div>
+        </select>
 
-    <div class="content">
+    </section>
 
-      <h2 data-aos="fade-up">
-        Serviços de Unhas
-      </h2>
 
-      <div class="cards">
+    <section class="card">
 
-        <div class="card" data-aos="zoom-in">
-         
-          <h3>Alongamento Molde F1</h3>
-          <p>
-            Alongamento sofisticado com acabamento elegante e natural.
-          </p>
+        <h2>2. Escolha a data</h2>
+
+        <label for="date">
+            Data
+        </label>
+
+        <input
+            type="date"
+            id="date"
+        >
+
+        <div id="availability" class="availability">
+            Selecione uma data.
         </div>
 
-        <div class="card" data-aos="zoom-in">
-          
-          <h3>Banho de Gel</h3>
-          <p>
-            Fortalecimento e brilho intenso para unhas impecáveis.
-          </p>
+    </section>
+
+
+    <section class="card">
+
+        <h2>3. Escolha o horário</h2>
+
+        <div id="times" class="times">
+
+            <button
+                type="button"
+                class="time"
+                data-time="09:00"
+            >
+                09:00
+            </button>
+
+            <button
+                type="button"
+                class="time"
+                data-time="13:30"
+            >
+                13:30
+            </button>
+
+            <button
+                type="button"
+                class="time"
+                data-time="17:00"
+            >
+                17:00
+            </button>
+
+            <button
+                type="button"
+                class="time other-time"
+                data-time="OUTRO"
+            >
+                Outro horário
+            </button>
+
         </div>
 
-        <div class="card" data-aos="zoom-in">
-      
-          <h3>Blindagem</h3>
-          <p>
-            Proteção e durabilidade para suas unhas naturais.
-          </p>
+
+        <div
+            id="customTimeContainer"
+            class="hidden"
+        >
+
+            <label for="customTime">
+                Informe o horário desejado
+            </label>
+
+            <input
+                type="time"
+                id="customTime"
+            >
+
+            <small>
+                Esse horário será analisado e confirmado pela Fabi.
+            </small>
+
         </div>
 
-      </div>
+    </section>
 
-    </div>
 
-  </section>
+    <section class="card">
 
-  <!-- SERVIÇOS CÍLIOS -->
+        <h2>4. Seus dados</h2>
 
-  <section class="services lashes-bg">
+        <label for="name">
+            Nome
+        </label>
 
-    <div class="overlay-section"></div>
+        <input
+            type="text"
+            id="name"
+            maxlength="80"
+            autocomplete="name"
+            placeholder="Digite seu nome"
+        >
 
-    <div class="content">
 
-      <h2 data-aos="fade-up">
-        Serviços de Cílios
-      </h2>
+        <label for="phone">
+            WhatsApp
+        </label>
 
-      <div class="cards">
+        <input
+            type="tel"
+            id="phone"
+            maxlength="20"
+            autocomplete="tel"
+            placeholder="(11) 99999-9999"
+        >
 
-        <div class="card" data-aos="zoom-in">
-        
+
+        <!-- Honeypot anti-bot -->
+        <div
+            class="honeypot"
+            aria-hidden="true"
+        >
+            <label for="website">
+                Não preencher
+            </label>
+
+            <input
+                type="text"
+                id="website"
+                tabindex="-1"
+                autocomplete="off"
+            >
         </div>
 
-        <div class="card" data-aos="zoom-in">
-          
-        </div>
+    </section>
 
-        <div class="card" data-aos="zoom-in">
-        
-        </div>
 
-      </div>
+    <section class="warning">
 
-    </div>
+        ⚠️ O agendamento será confirmado somente após a confirmação da Fabi pelo WhatsApp.
 
-  </section>
+    </section>
 
-  <!-- CONTATO -->
 
-  <section class="contact" id="contato">
+    <button
+        id="bookButton"
+        class="book-button"
+        type="button"
+    >
+        Agendar pelo WhatsApp
+    </button>
 
-    <h2 data-aos="fade-up">
-      Contato
-    </h2>
 
-    <div class="contact-info" data-aos="fade-up">
+    <div
+        id="message"
+        class="message"
+        role="status"
+        aria-live="polite"
+    ></div>
 
-      <p>
-        <i class="fa-brands fa-instagram"></i>
-        @studio_fabisena
-      </p>
+</main>
 
-      <p>
-        <i class="fa-brands fa-whatsapp"></i>
-        (11) 96851-5895
-      </p>
 
-      <p>
-        <i class="fa-solid fa-location-dot"></i>
-        R. dos Apiaris, 144 - Jardim Santa Terezinha (Zona Sul),
-        São Paulo - SP, 04474-140
-      </p>
-
-    </div>
-
-    <div class="map" data-aos="fade-up">
-
-      <iframe
-        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d913.3502668822957!2d-46.64644643049239!3d-23.69736757064452!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce450e7d2ce1ed%3A0xd2794ece8ebde497!2sR.%20dos%20Apiaris%2C%20144%20-%20Jardim%20Santa%20Terezinha%20(Zona%20Sul)%2C%20S%C3%A3o%20Paulo%20-%20SP%2C%2004474-140!5e0!3m2!1spt-BR!2sbr!4v1778159293003!5m2!1spt-BR!2sbr"
-        allowfullscreen=""
-        loading="lazy">
-      </iframe>
-
-    </div>
-
-  </section>
-
-  <!-- FOOTER -->
-
-  <footer>
-    © 2026 Studio Fabiana Sena - Todos os direitos reservados.
-    Desenvolvido por Thiago Coelho.
-  </footer>
-
-  <!-- WHATSAPP -->
-
-  <a href="https://wa.me/5511968515895" class="floating-whatsapp" target="_blank">
-    <i class="fa-brands fa-whatsapp"></i>
-  </a>
-
-  <!-- AOS -->
-  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-
-  <!-- JS -->
-  <script src="script.js"></script>
+<script src="/script.js" defer></script>
 
 </body>
-
 </html>
