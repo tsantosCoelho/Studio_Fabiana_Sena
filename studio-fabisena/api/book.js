@@ -1,8 +1,4 @@
 export default async function handler(req, res) {
-    // ==========================================
-    // SOMENTE POST
-    // ==========================================
-
     if (req.method !== "POST") {
         return res.status(405).json({
             success: false,
@@ -10,25 +6,16 @@ export default async function handler(req, res) {
         });
     }
 
-    // ==========================================
-    // VARIÁVEIS DE AMBIENTE
-    // ==========================================
-
     const backendUrl = process.env.APPS_SCRIPT_URL;
-    const backendToken = process.env.BACKEND_TOKEN;
 
-    if (!backendUrl || !backendToken) {
-        console.error("Variáveis de ambiente não configuradas.");
+    if (!backendUrl) {
+        console.error("APPS_SCRIPT_URL não configurada.");
 
         return res.status(500).json({
             success: false,
             message: "Erro interno."
         });
     }
-
-    // ==========================================
-    // LER BODY
-    // ==========================================
 
     let body;
 
@@ -46,10 +33,6 @@ export default async function handler(req, res) {
             message: "Dados inválidos."
         });
     }
-
-    // ==========================================
-    // LIMPAR E LIMITAR DADOS
-    // ==========================================
 
     const service =
         typeof body.service === "string"
@@ -79,9 +62,9 @@ export default async function handler(req, res) {
     const customTime =
         body.customTime === true;
 
-    // ==========================================
-    // CAMPOS OBRIGATÓRIOS
-    // ==========================================
+    // =========================
+    // VALIDAÇÕES
+    // =========================
 
     if (!service || !date || !time || !name || !phone) {
         return res.status(400).json({
@@ -90,10 +73,6 @@ export default async function handler(req, res) {
         });
     }
 
-    // ==========================================
-    // VALIDAR DATA
-    // ==========================================
-
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
         return res.status(400).json({
             success: false,
@@ -101,21 +80,12 @@ export default async function handler(req, res) {
         });
     }
 
-    // ==========================================
-    // VALIDAR HORÁRIO
-    // ==========================================
-
     if (!/^\d{2}:\d{2}$/.test(time)) {
         return res.status(400).json({
             success: false,
             message: "Horário inválido."
         });
     }
-
-    // ==========================================
-    // VALIDAR HORA REAL
-    // Evita coisas como 99:99
-    // ==========================================
 
     const [hours, minutes] = time.split(":").map(Number);
 
@@ -131,10 +101,6 @@ export default async function handler(req, res) {
         });
     }
 
-    // ==========================================
-    // VALIDAR NOME
-    // ==========================================
-
     if (/[\u0000-\u001F\u007F]/.test(name)) {
         return res.status(400).json({
             success: false,
@@ -149,10 +115,6 @@ export default async function handler(req, res) {
         });
     }
 
-    // ==========================================
-    // VALIDAR WHATSAPP
-    // ==========================================
-
     const phoneDigits = phone.replace(/\D/g, "");
 
     if (
@@ -165,17 +127,13 @@ export default async function handler(req, res) {
         });
     }
 
-    // ==========================================
-    // ENVIAR PARA GOOGLE APPS SCRIPT
-    // ==========================================
+    // =========================
+    // ENVIO PARA APPS SCRIPT
+    // =========================
 
     try {
         const payload = {
             action: "book",
-
-            // Token fica SOMENTE no servidor
-            token: backendToken,
-
             service,
             date,
             time,
@@ -184,29 +142,26 @@ export default async function handler(req, res) {
             customTime
         };
 
-        console.log("Enviando agendamento para Apps Script:", {
-            service,
-            date,
-            time,
-            name,
-            phoneLength: phoneDigits.length,
-            customTime
-        });
+        console.log(
+            "Enviando agendamento para Apps Script:",
+            {
+                service,
+                date,
+                time,
+                name,
+                phoneLength: phoneDigits.length,
+                customTime
+            }
+        );
 
         const response = await fetch(backendUrl, {
             method: "POST",
-
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json"
             },
-
             body: JSON.stringify(payload)
         });
-
-        // ==========================================
-        // LER RESPOSTA DO APPS SCRIPT
-        // ==========================================
 
         const responseText = await response.text();
 
@@ -233,11 +188,7 @@ export default async function handler(req, res) {
             });
         }
 
-        // ==========================================
-        // ERRO RETORNADO PELO APPS SCRIPT
-        // ==========================================
-
-        if (!response.ok || !data.success) {
+        if (!response.ok || data.success === false) {
             console.error(
                 "Erro retornado pelo Apps Script:",
                 data
@@ -250,10 +201,6 @@ export default async function handler(req, res) {
                     "Não foi possível realizar o agendamento."
             });
         }
-
-        // ==========================================
-        // SUCESSO
-        // ==========================================
 
         return res.status(200).json({
             success: true,
