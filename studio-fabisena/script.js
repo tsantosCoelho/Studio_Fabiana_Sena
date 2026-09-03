@@ -30,7 +30,7 @@ const LUNCH_START =
 
 
 const LUNCH_END =
-    "13:00";
+    "13:30";
 
 
 const CLOSE_TIME =
